@@ -1,0 +1,18 @@
+[project]
+name = "django-project-model"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "toriium",email = "jorge.r.p.v@hotmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "django (>=6.0,<7.0)",
+    "django-jazzmin (>=3.0.1,<4.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

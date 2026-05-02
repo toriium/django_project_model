@@ -4,8 +4,9 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/2.3.8/js/dataTables.min.js"></script>
 
-<div class="container mt-4">
-    <table id="genericTable" class="display" style="width:100%">
+<div class="container-fluid mt-4 h-100 d-flex flex-column">
+    <div class="flex-grow-1 d-flex flex-column">
+        <table id="genericTable" class="display w-100 h-100" style="min-height:100%;">
         <thead>
             <tr>
                 {% for col in columns %}
@@ -22,7 +23,8 @@
                 </tr>
             {% endfor %}
         </tbody>
-    </table>
+        </table>
+    </div>
 </div>
 
 <script>

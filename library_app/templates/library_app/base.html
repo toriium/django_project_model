@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Panel{% endblock %}</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            min-height: 100vh;
+            background: #f4f6f9;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            min-width: 220px;
+            background: #1e2a38;
+            color: #c9d1d9;
+            display: flex;
+            flex-direction: column;
+            padding-top: 0;
+        }
+
+        .sidebar-header {
+            padding: 20px 16px;
+            background: #141d27;
+            font-size: 1em;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 0.03em;
+            border-bottom: 1px solid #2d3e50;
+        }
+
+        .sidebar nav {
+            padding: 12px 0;
+            flex: 1;
+        }
+
+        .sidebar nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            color: #c9d1d9;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: background 0.15s, color 0.15s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar nav a:hover {
+            background: #263545;
+            color: #fff;
+            border-left-color: #4a9eff;
+        }
+
+        .sidebar nav a.active {
+            background: #263545;
+            color: #fff;
+            border-left-color: #4a9eff;
+        }
+
+        .sidebar nav .nav-section {
+            padding: 16px 20px 6px;
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #5a6a7a;
+        }
+
+        /* Main content */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .topbar {
+            background: #fff;
+            border-bottom: 1px solid #e1e4e8;
+            padding: 14px 28px;
+            font-size: 1.05em;
+            font-weight: bold;
+            color: #1e2a38;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .topbar-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9em;
+            font-weight: normal;
+        }
+
+        .topbar-user span {
+            color: #5a6a7a;
+        }
+
+        .btn-login {
+            padding: 6px 16px;
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.88em;
+            cursor: pointer;
+        }
+
+        .btn-login:hover { background: #1558a8; }
+
+        .btn-logout {
+            padding: 6px 16px;
+            background: transparent;
+            color: #d9534f;
+            border: 1px solid #d9534f;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.88em;
+            cursor: pointer;
+        }
+
+        .btn-logout:hover { background: #fdf2f2; }
+
+        #back-to-top {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            width: 40px;
+            height: 40px;
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.1em;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            transition: background 0.15s;
+        }
+        #back-to-top:hover { background: #1558a8; }
+        #back-to-top.visible { display: flex; }
+
+        .content {
+            padding: 32px 36px;
+            flex: 1;
+        }
+    </style>
+    {% block extra_styles %}{% endblock %}
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-header">&#9672; Admin Panel</div>
+    <nav>
+        <span class="nav-section">Menu</span>
+        <a href="/" {% if request.path == "/" %}class="active"{% endif %}>
+            &#8962; Home
+        </a>
+        <a href="/books/" {% if request.path == "/books/" %}class="active"{% endif %}>
+            &#128279; Books
+        </a>
+        <span class="nav-section">System</span>
+        <a href="/admin/" target="_blank">
+            &#9881; Django Admin
+        </a>
+    </nav>
+</aside>
+
+<div class="main">
+    <div class="topbar">
+        <span>{% block page_title %}{% endblock %}</span>
+        <div class="topbar-user">
+            {% if user.is_authenticated %}
+                <span>&#128100; {{ user.username }}</span>
+                <form method="post" action="/login/logout/" style="margin:0;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-logout">Logout</button>
+                </form>
+            {% else %}
+                <a href="/login/login/?next={{ request.path }}" class="btn-login">Login</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<button id="back-to-top" title="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8679;</button>
+
+<script>
+    const _btt = document.getElementById('back-to-top');
+    const _content = document.querySelector('.content');
+    if (_content) {
+        _content.addEventListener('scroll', function () {
+            _btt.classList.toggle('visible', this.scrollTop > 200);
+        });
+    }
+    window.addEventListener('scroll', function () {
+        _btt.classList.toggle('visible', window.scrollY > 200);
+    });
+</script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

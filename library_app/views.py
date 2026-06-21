@@ -1,5 +1,6 @@
 from datetime import date, datetime
 
+from django.http import Http404
 from django.shortcuts import render
 from pydantic import BaseModel
 
@@ -56,3 +57,11 @@ def people_table(request):
         ),
     ]
     return generate_generic_table(request, people)
+
+
+def trigger_404(request):
+    raise Http404("This page does not exist.")
+
+
+def trigger_500(request):
+    raise Exception("Intentional server error for testing.")

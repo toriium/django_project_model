@@ -12,26 +12,31 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from pathlib import Path
-from dotenv import find_dotenv, load_dotenv
+from dotenv import load_dotenv
 
-# Load environment variables from .env file
-env_path = find_dotenv("../env.env")
-load_dotenv(env_path)
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / ".env")
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
+SECRET_KEY = os.getenv("SECRET_KEY")  # secret key for cryptographic signing
+DEBUG = os.getenv("DEBUG", "False") == "True"  # never set to True in production
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")  # domains allowed to serve the app
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")  # origins trusted for CSRF POST requests
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-p2@h&wu6u(8+q#0qyh!k65)*e9ln))k@y2+jd6ol5hiha=k_d&"
+# Security
+X_FRAME_OPTIONS = "DENY"  # prevents site from being embedded in iframes
+SECURE_CONTENT_TYPE_NOSNIFF = True  # prevents browser from guessing file content type
+SECURE_REFERRER_POLICY = "same-origin"  # hides referrer URL on cross-origin requests
+SESSION_COOKIE_HTTPONLY = True  # blocks JavaScript from reading the session cookie
+SESSION_COOKIE_AGE = 3600  # session expires after 1 hour of inactivity
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True  # redirects all HTTP requests to HTTPS
+    SESSION_COOKIE_SECURE = True  # session cookie is only sent over HTTPS
+    CSRF_COOKIE_SECURE = True  # CSRF cookie is only sent over HTTPS
+    SECURE_HSTS_SECONDS = 31536000  # forces HTTPS for 1 year via browser header
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # applies HSTS to all subdomains
+    SECURE_HSTS_PRELOAD = True  # allows site to be included in browser HSTS preload list
 
 
 # Application definition

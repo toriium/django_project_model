@@ -30,4 +30,3 @@ class Book(BaseModel):
 
     class Meta:
         managed = True
-

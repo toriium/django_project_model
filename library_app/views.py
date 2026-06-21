@@ -1,5 +1,6 @@
 from datetime import date, datetime
 
+from django.contrib.auth.decorators import login_not_required
 from django.http import Http404
 from django.shortcuts import render
 from pydantic import BaseModel
@@ -57,6 +58,11 @@ def people_table(request):
         ),
     ]
     return generate_generic_table(request, people)
+
+
+@login_not_required
+def public(request):
+    return render(request, "library_app/public.html")
 
 
 def trigger_404(request):

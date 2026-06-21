@@ -16,6 +16,8 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Only loads the .env file if it exists
+# In Production, the environment variables will be set in the environment, not in a file.
 load_dotenv(BASE_DIR / ".env")
 
 SECRET_KEY = os.getenv("SECRET_KEY")  # secret key for cryptographic signing

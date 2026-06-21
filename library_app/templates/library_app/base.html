@@ -27,6 +27,9 @@
                 <li class="nav-item">
                     <a class="nav-link px-0 text-light" href="/admin/" target="_blank">&#9881; Django Admin</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link px-0 {% if request.path == '/public/' %}active bg-primary text-white{% else %}text-light{% endif %}" href="{% url 'public' %}">&#127760; Public Page</a>
+                </li>
                 <li class="nav-item small text-secondary text-uppercase mt-3 mb-1">Test Errors</li>
                 <li class="nav-item">
                     <a class="nav-link px-0 text-warning" href="{% url 'trigger_404' %}">&#9888; Test 404</a>

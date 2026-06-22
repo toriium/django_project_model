@@ -34,6 +34,7 @@ SESSION_COOKIE_AGE = 3600  # session expires after 1 hour of inactivity
 
 if not DEBUG:
     SECURE_SSL_REDIRECT = True  # redirects all HTTP requests to HTTPS
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")  # trusts Caddy's forwarded protocol header
     SESSION_COOKIE_SECURE = True  # session cookie is only sent over HTTPS
     CSRF_COOKIE_SECURE = True  # CSRF cookie is only sent over HTTPS
     SECURE_HSTS_SECONDS = 31536000  # forces HTTPS for 1 year via browser header

@@ -1,0 +1,11 @@
+localhost {
+	handle /static/* {
+		uri strip_prefix /static
+		root * /app/staticfiles
+		file_server
+	}
+
+	handle {
+		reverse_proxy web:8000
+	}
+}

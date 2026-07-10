@@ -6,3 +6,5 @@ down:
 
 logs:
 	docker compose logs -f
+local:
+	python manage.py runserver

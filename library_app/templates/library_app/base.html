@@ -1,3 +1,4 @@
+{% load nav_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,30 +14,12 @@
         <nav class="bg-dark text-white p-3 flex-shrink-0" style="width:220px;min-height:100vh;">
             <h5 class="mb-4">&#9672; Admin Panel</h5>
             <ul class="nav flex-column mb-2">
-                <li class="nav-item small text-secondary text-uppercase mb-1">Menu</li>
+                {% get_nav_items as nav_items %}
+                {% for item in nav_items %}
                 <li class="nav-item">
-                    <a class="nav-link px-0 {% if request.path == '/' %}active bg-primary text-white{% else %}text-light{% endif %}" href="/">&#8962; Home</a>
+                    <a class="nav-link px-0 {% nav_active_class item.href %}" href="{{ item.href }}"{% if item.new_tab %} target="_blank"{% endif %}>{{ item.icon|safe }} {{ item.label }}</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link px-0 {% if request.path == '/books/' %}active bg-primary text-white{% else %}text-light{% endif %}" href="/books/">&#128279; Books</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link px-0 {% if request.path == '/people/' %}active bg-primary text-white{% else %}text-light{% endif %}" href="/people/">&#128100; People</a>
-                </li>
-                <li class="nav-item small text-secondary text-uppercase mt-3 mb-1">System</li>
-                <li class="nav-item">
-                    <a class="nav-link px-0 text-light" href="/admin/" target="_blank">&#9881; Django Admin</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link px-0 {% if request.path == '/public/' %}active bg-primary text-white{% else %}text-light{% endif %}" href="{% url 'public' %}">&#127760; Public Page</a>
-                </li>
-                <li class="nav-item small text-secondary text-uppercase mt-3 mb-1">Test Errors</li>
-                <li class="nav-item">
-                    <a class="nav-link px-0 text-warning" href="{% url 'trigger_404' %}">&#9888; Test 404</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link px-0 text-danger" href="{% url 'trigger_500' %}">&#128165; Test 500</a>
-                </li>
+                {% endfor %}
             </ul>
         </nav>
         <!-- Main content -->

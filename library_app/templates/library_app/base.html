@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Admin Panel{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     {% block extra_styles %}{% endblock %}
 </head>
 <body class="bg-light">
@@ -16,18 +17,18 @@
             <ul class="nav flex-column mb-2" id="sidebar-nav">
                 {% get_nav_items as nav_items %}
                 {% for item in nav_items %}
-                <li class="nav-item {% if item.children %}dropend{% endif %}">
-                    {% if item.children %}
-                        <button type="button" class="nav-link px-0 text-light dropdown-toggle bg-transparent border-0 d-inline-block" data-bs-toggle="dropdown" aria-expanded="false">{{ item.icon|safe }} {{ item.label }}</button>
+                <li class="nav-item {% if item.nav_items_list %}dropend{% endif %}">
+                    {% if item.nav_items_list %}
+                        <button type="button" class="nav-link px-0 text-light dropdown-toggle bg-transparent border-0 d-inline-block" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi {{ item.icon }}"></i> {{ item.label }}</button>
                         <ul class="dropdown-menu dropdown-menu-dark">
-                            {% for child in item.children %}
+                            {% for child in item.nav_items_list %}
                             <li>
-                                <a class="dropdown-item {% nav_active_class child.href %}" href="{{ child.href }}"{% if child.new_tab %} target="_blank"{% endif %}>{{ child.icon|safe }} {{ child.label }}</a>
+                                <a class="dropdown-item {% nav_active_class child.href %}" href="{{ child.href }}"{% if child.new_tab %} target="_blank"{% endif %}><i class="bi {{ child.icon }}"></i> {{ child.label }}</a>
                             </li>
                             {% endfor %}
                         </ul>
                     {% else %}
-                        <a class="nav-link px-0 {% nav_active_class item.href %}" href="{{ item.href }}"{% if item.new_tab %} target="_blank"{% endif %}>{{ item.icon|safe }} {{ item.label }}</a>
+                        <a class="nav-link px-0 {% nav_active_class item.href %}" href="{{ item.href }}"{% if item.new_tab %} target="_blank"{% endif %}><i class="bi {{ item.icon }}"></i> {{ item.label }}</a>
                     {% endif %}
                 </li>
                 {% endfor %}

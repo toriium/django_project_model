@@ -1,35 +1,36 @@
 {% extends "library_app/base.html" %}
 {% block content %}
-<link rel="stylesheet" href="https://cdn.datatables.net/2.3.8/css/dataTables.dataTables.min.css">
-<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-<script src="https://cdn.datatables.net/2.3.8/js/dataTables.min.js"></script>
-
-<div class="container-fluid mt-4 h-100 d-flex flex-column">
-    <div class="flex-grow-1 d-flex flex-column">
-        <table id="genericTable" class="display w-100 h-100" style="min-height:100%;">
-        <thead>
-            <tr>
-                {% for col in columns %}
-                    <th>{{ col|capfirst }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in data %}
-                <tr>
-                    {% for cell in row %}
-                        <td>{{ cell }}</td>
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/2.3.8/css/dataTables.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.8/js/dataTables.min.js"></script>
+    <div class="container-fluid mt-4 h-100 d-flex flex-column">
+        <div class="flex-grow-1 d-flex flex-column">
+            <table id="genericTable"
+                   class="display w-100 h-100"
+                   style="min-height:100%">
+                <thead>
+                    <tr>
+                        {% for col in columns %}
+                            <th>{{ col|capfirst }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                        <tr>
+                            {% for cell in row %}
+                                <td>{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
                     {% endfor %}
-                </tr>
-            {% endfor %}
-        </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
-
-<script>
+    <script>
 $(document).ready(function() {
     $('#genericTable').DataTable();
 });
-</script>
+    </script>
 {% endblock %}

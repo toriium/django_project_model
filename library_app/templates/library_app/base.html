@@ -13,11 +13,22 @@
         <!-- Sidebar -->
         <nav class="bg-dark text-white p-3 flex-shrink-0" style="width:220px;min-height:100vh;">
             <h5 class="mb-4">&#9672; Admin Panel</h5>
-            <ul class="nav flex-column mb-2">
+            <ul class="nav flex-column mb-2" id="sidebar-nav">
                 {% get_nav_items as nav_items %}
                 {% for item in nav_items %}
-                <li class="nav-item">
-                    <a class="nav-link px-0 {% nav_active_class item.href %}" href="{{ item.href }}"{% if item.new_tab %} target="_blank"{% endif %}>{{ item.icon|safe }} {{ item.label }}</a>
+                <li class="nav-item {% if item.children %}dropend{% endif %}">
+                    {% if item.children %}
+                        <button type="button" class="nav-link px-0 text-light dropdown-toggle bg-transparent border-0 d-inline-block" data-bs-toggle="dropdown" aria-expanded="false">{{ item.icon|safe }} {{ item.label }}</button>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            {% for child in item.children %}
+                            <li>
+                                <a class="dropdown-item {% nav_active_class child.href %}" href="{{ child.href }}"{% if child.new_tab %} target="_blank"{% endif %}>{{ child.icon|safe }} {{ child.label }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <a class="nav-link px-0 {% nav_active_class item.href %}" href="{{ item.href }}"{% if item.new_tab %} target="_blank"{% endif %}>{{ item.icon|safe }} {{ item.label }}</a>
+                    {% endif %}
                 </li>
                 {% endfor %}
             </ul>
@@ -44,10 +55,17 @@
         </div>
     </div>
     <button id="back-to-top" title="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})" class="btn btn-primary rounded-circle position-fixed" style="bottom:28px;right:28px;width:40px;height:40px;display:none;z-index:1050;">&#8679;</button>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         const _btt = document.getElementById('back-to-top');
         window.addEventListener('scroll', function () {
             _btt.style.display = window.scrollY > 200 ? 'flex' : 'none';
+        });
+
+        document.querySelectorAll('#sidebar-nav .dropdown').forEach(function (el) {
+            const dropdown = bootstrap.Dropdown.getOrCreateInstance(el.querySelector('[data-bs-toggle="dropdown"]'));
+            el.addEventListener('mouseenter', function () { dropdown.show(); });
+            el.addEventListener('mouseleave', function () { dropdown.hide(); });
         });
     </script>
     {% block extra_scripts %}{% endblock %}

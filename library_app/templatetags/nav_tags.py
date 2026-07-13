@@ -13,7 +13,7 @@ def _item(label, icon, url_name=None, path=None, new_tab=False):
 def get_nav_items():
     return [
         _item("Home", "&#8962;", url_name="home"),
-        _item("Books", "&#128279;", path="/books/"),
+        _item("Books", "&#128279;", url_name="books_table"),
         _item("People", "&#128100;", url_name="people_table"),
         _item("Django Admin", "&#9881;", path="/admin/", new_tab=True),
         _item("Public Page", "&#127760;", url_name="public"),

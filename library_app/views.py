@@ -5,6 +5,8 @@ from django.http import Http404
 from django.shortcuts import render
 from pydantic import BaseModel
 
+from .models import Book
+
 
 # Create your views here.
 def home(request):
@@ -58,6 +60,25 @@ def people_table(request):
         ),
     ]
     return generate_generic_table(request, people)
+
+
+def books_table(request):
+    class BookTable(BaseModel):
+        title: str
+        author: str
+        publication_year: int
+        created_at: datetime
+
+    books = [
+        BookTable(
+            title=book.title,
+            author=book.author.name,
+            publication_year=book.publication_year,
+            created_at=book.created_at,
+        )
+        for book in Book.objects.select_related("author").all()
+    ]
+    return generate_generic_table(request, books)
 
 
 @login_not_required

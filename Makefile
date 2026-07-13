@@ -7,4 +7,4 @@ down:
 logs:
 	docker compose logs -f
 local:
-	python manage.py runserver
+	uv run python manage.py runserver

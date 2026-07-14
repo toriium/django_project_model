@@ -14,33 +14,44 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Only loads the .env file if it exists
 # In Production, the environment variables will be set in the environment, not in a file.
 load_dotenv(BASE_DIR / ".env")
 
-SECRET_KEY = os.getenv("SECRET_KEY")  # secret key for cryptographic signing
-DEBUG = os.getenv("DEBUG", "False") == "True"  # never set to True in production
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")  # domains allowed to serve the app
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")  # origins trusted for CSRF POST requests
+DEBUG = os.getenv("DEBUG", "False") == "True"  # never set to True in production (False)
+SECRET_KEY = os.getenv("SECRET_KEY")  # secret key for cryptographic signing ('')
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")  # domains allowed to serve the app ([])
+
+# CSRF
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")  # origins trusted for CSRF POST requests ([])
+CSRF_COOKIE_HTTPONLY = True  # blocks JavaScript from reading the CSRF cookie (False)
+CSRF_COOKIE_SAMESITE = "Lax"  # blocks the CSRF cookie on cross-site POST/iframe/fetch requests ('Lax')
 
 # Security
-X_FRAME_OPTIONS = "DENY"  # prevents site from being embedded in iframes
-SECURE_CONTENT_TYPE_NOSNIFF = True  # prevents browser from guessing file content type
-SECURE_REFERRER_POLICY = "same-origin"  # hides referrer URL on cross-origin requests
-SESSION_COOKIE_HTTPONLY = True  # blocks JavaScript from reading the session cookie
-SESSION_COOKIE_AGE = 3600  # session expires after 1 hour of inactivity
+X_FRAME_OPTIONS = "DENY"  # prevents site from being embedded in iframes ('DENY')
+SECURE_CONTENT_TYPE_NOSNIFF = True  # prevents browser from guessing file content type (True)
+SECURE_REFERRER_POLICY = "same-origin"  # hides referrer URL on cross-origin requests ('same-origin')
+
+# Session
+SESSION_COOKIE_HTTPONLY = True  # blocks JavaScript from reading the session cookie (True)
+SESSION_COOKIE_SAMESITE = "Lax"  # blocks the session cookie on cross-site POST/iframe/fetch requests ('Lax')
+SESSION_COOKIE_AGE = 3600  # session expires after 1 hour of inactivity (1209600)
+SESSION_SAVE_EVERY_REQUEST = True  # resets the expiry timer on every request (False)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # session also ends when the browser is closed (False)
+
+print(f"DEBUG: {DEBUG}")
 
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True  # redirects all HTTP requests to HTTPS
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")  # trusts Caddy's forwarded protocol header
-    SESSION_COOKIE_SECURE = True  # session cookie is only sent over HTTPS
-    CSRF_COOKIE_SECURE = True  # CSRF cookie is only sent over HTTPS
-    SECURE_HSTS_SECONDS = 31536000  # forces HTTPS for 1 year via browser header
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # applies HSTS to all subdomains
-    SECURE_HSTS_PRELOAD = True  # allows site to be included in browser HSTS preload list
-
+    SECURE_SSL_REDIRECT = True  # redirects all HTTP requests to HTTPS (False)
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")  # trusts Caddy's forwarded protocol header (None)
+    SESSION_COOKIE_SECURE = True  # session cookie is only sent over HTTPS (False)
+    CSRF_COOKIE_SECURE = True  # CSRF cookie is only sent over HTTPS (False)
+    SECURE_HSTS_SECONDS = 31536000  # forces HTTPS for 1 year via browser header (0)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # applies HSTS to all subdomains (False)
+    SECURE_HSTS_PRELOAD = True  # allows site to be included in browser HSTS preload list (False)
 
 # Application definition
 
@@ -61,7 +72,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.auth.middleware.LoginRequiredMiddleware",
+    "django.contrib.auth.middleware.LoginRequiredMiddleware", # Middleware to require login for all views
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]

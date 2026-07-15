@@ -63,6 +63,10 @@
     const table = new Tabulator("#genericTable", {
         data: tableData,
         layout: "fitColumns",
+        pagination: true,
+        paginationSize: 15,
+        paginationSizeSelector: [10, 15, 25, 50, 100],
+        paginationCounter: "rows",
         columns: columnNames.map(col => ({
             title: col.charAt(0).toUpperCase() + col.slice(1),
             field: col,

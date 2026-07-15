@@ -13,7 +13,7 @@ def home(request):
     return render(request, "library_app/home.html")
 
 
-def generate_generic_table(request, table_name: str, values: list[BaseModel] ):
+def generate_generic_table(request, table_name: str, values: list[BaseModel]):
     if not values:
         columns = []
         data = []
@@ -37,7 +37,7 @@ def people_table(request):
         created_at: datetime
         active: bool
 
-    people = [
+    people_list = [
         PeopleTable(
             name="Alice",
             age=30,
@@ -57,10 +57,18 @@ def people_table(request):
             age=35,
             birthday=date(1988, 3, 10),
             created_at=datetime(2023, 1, 3, 12, 0, 0),
-            active=True,
+            active=True
         ),
+        *[PeopleTable(
+            name=f"Person {i}",
+            age=i,
+            birthday=date(1993, 5, 15),
+            created_at=datetime(2023, 1, 1, 10, 0, 0),
+            active=True
+        ) for i in range(1, 200)] 
     ]
-    return generate_generic_table(request, table_name="People", values=people)
+
+    return generate_generic_table(request, table_name="People", values=people_list)
 
 
 def books_table(request):

@@ -25,7 +25,7 @@ def generate_generic_table(request, values: list[BaseModel]):
         "columns": columns,
         "data": data,
     }
-    return render(request, "library_app/generate_generic_table.html", context)
+    return render(request, "library_app/generic_table.html", context)
 
 
 def people_table(request):

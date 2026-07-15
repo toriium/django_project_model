@@ -1,0 +1,71 @@
+{% extends "library_app/base.html" %}
+{% block content %}
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/tabulator-tables@6/dist/css/tabulator_bootstrap5.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@6/dist/js/tabulator.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+    <div class="container-fluid mt-4 h-100 d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+            <input type="text"
+                   id="global-search"
+                   class="form-control form-control-sm w-auto"
+                   placeholder="Global Search...">
+            <div class="d-flex gap-2">
+                <button id="export-csv" class="btn btn-sm btn-outline-secondary">CSV</button>
+                <button id="export-xlsx" class="btn btn-sm btn-outline-secondary">XLSX</button>
+                <button id="export-pdf" class="btn btn-sm btn-outline-secondary">PDF</button>
+            </div>
+        </div>
+        <div class="flex-grow-1 d-flex flex-column">
+            <div id="genericTable"></div>
+        </div>
+    </div>
+    {{ columns|json_script:"columns-data" }}
+    {{ data|json_script:"table-data" }}
+    <script>
+const columnNames = JSON.parse(document.getElementById('columns-data').textContent);
+const rows = JSON.parse(document.getElementById('table-data').textContent);
+const tableData = rows.map(row => Object.fromEntries(columnNames.map((col, i) => [col, row[i]])));
+
+function filterTypeFor(col) {
+    const sample = tableData.find(row => row[col] !== null && row[col] !== undefined);
+    const value = sample ? sample[col] : null;
+    if (typeof value === "boolean") {
+        return { headerFilter: "tickCross", headerFilterParams: { tristate: true }, formatter: "tickCross" };
+    }
+    if (typeof value === "number") {
+        return { headerFilter: "number", headerFilterFunc: ">=" };
+    }
+    return {
+        headerFilter: "list",
+        headerFilterParams: { valuesLookup: true, clearable: true, multiselect: true },
+        headerFilterFunc: "in",
+    };
+}
+
+const table = new Tabulator("#genericTable", {
+    data: tableData,
+    layout: "fitColumns",
+    columns: columnNames.map(col => ({
+        title: col.charAt(0).toUpperCase() + col.slice(1),
+        field: col,
+        ...filterTypeFor(col),
+    })),
+});
+
+document.getElementById("global-search").addEventListener("input", (e) => {
+    const term = e.target.value.trim().toLowerCase();
+    if (!term) {
+        table.clearFilter();
+        return;
+    }
+    table.setFilter((data) => columnNames.some((col) => String(data[col] ?? "").toLowerCase().includes(term)));
+});
+
+document.getElementById("export-csv").addEventListener("click", () => table.download("csv", "table.csv"));
+document.getElementById("export-xlsx").addEventListener("click", () => table.download("xlsx", "table.xlsx", { sheetName: "Data" }));
+document.getElementById("export-pdf").addEventListener("click", () => table.download("pdf", "table.pdf", { orientation: "landscape", title: "Table" }));
+    </script>
+{% endblock %}

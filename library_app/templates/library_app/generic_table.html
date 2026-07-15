@@ -7,15 +7,23 @@
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
     <div class="container-fluid mt-4 h-100 d-flex flex-column">
+        <h1>{{ table_name }}</h1>
         <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
             <input type="text"
                    id="global-search"
                    class="form-control form-control-sm w-auto"
                    placeholder="Global Search...">
-            <div class="d-flex gap-2">
-                <button id="export-csv" class="btn btn-sm btn-outline-secondary">CSV</button>
-                <button id="export-xlsx" class="btn btn-sm btn-outline-secondary">XLSX</button>
-                <button id="export-pdf" class="btn btn-sm btn-outline-secondary">PDF</button>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary"
+                        type="button"
+                        data-bs-toggle="dropdown">
+                    <i class="bi bi-download"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a id="export-csv" class="dropdown-item" href="#">CSV</a></li>
+                    <li><a id="export-xlsx" class="dropdown-item" href="#">XLSX</a></li>
+                    <li><a id="export-pdf" class="dropdown-item" href="#">PDF</a></li>
+                </ul>
             </div>
         </div>
         <div class="flex-grow-1 d-flex flex-column">
@@ -25,47 +33,56 @@
     {{ columns|json_script:"columns-data" }}
     {{ data|json_script:"table-data" }}
     <script>
-const columnNames = JSON.parse(document.getElementById('columns-data').textContent);
-const rows = JSON.parse(document.getElementById('table-data').textContent);
-const tableData = rows.map(row => Object.fromEntries(columnNames.map((col, i) => [col, row[i]])));
+    // Read column names and row data injected by Django via json_script
+    const columnNames = JSON.parse(document.getElementById('columns-data').textContent);
+    const rows = JSON.parse(document.getElementById('table-data').textContent);
+    // Tabulator needs objects keyed by field name, not plain arrays
+    const tableData = rows.map(row => Object.fromEntries(columnNames.map((col, i) => [col, row[i]])));
 
-function filterTypeFor(col) {
-    const sample = tableData.find(row => row[col] !== null && row[col] !== undefined);
-    const value = sample ? sample[col] : null;
-    if (typeof value === "boolean") {
-        return { headerFilter: "tickCross", headerFilterParams: { tristate: true }, formatter: "tickCross" };
+    // Pick a header filter type based on the column's data type
+    function filterTypeFor(col) {
+        const sample = tableData.find(row => row[col] !== null && row[col] !== undefined);
+        const value = sample ? sample[col] : null;
+        if (typeof value === "boolean") {
+            // true/false/all filter
+            return { headerFilter: "tickCross", headerFilterParams: { tristate: true }, formatter: "tickCross" };
+        }
+        if (typeof value === "number") {
+            // ">=" numeric filter
+            return { headerFilter: "number", headerFilterFunc: ">=" };
+        }
+        // dropdown filter built automatically from the distinct values in the column
+        return {
+            headerFilter: "list",
+            headerFilterParams: { valuesLookup: true, clearable: true, multiselect: true },
+            headerFilterFunc: "in",
+        };
     }
-    if (typeof value === "number") {
-        return { headerFilter: "number", headerFilterFunc: ">=" };
-    }
-    return {
-        headerFilter: "list",
-        headerFilterParams: { valuesLookup: true, clearable: true, multiselect: true },
-        headerFilterFunc: "in",
-    };
-}
 
-const table = new Tabulator("#genericTable", {
-    data: tableData,
-    layout: "fitColumns",
-    columns: columnNames.map(col => ({
-        title: col.charAt(0).toUpperCase() + col.slice(1),
-        field: col,
-        ...filterTypeFor(col),
-    })),
-});
+    // Build the table, generating one column per field with its matching filter
+    const table = new Tabulator("#genericTable", {
+        data: tableData,
+        layout: "fitColumns",
+        columns: columnNames.map(col => ({
+            title: col.charAt(0).toUpperCase() + col.slice(1),
+            field: col,
+            ...filterTypeFor(col),
+        })),
+    });
 
-document.getElementById("global-search").addEventListener("input", (e) => {
-    const term = e.target.value.trim().toLowerCase();
-    if (!term) {
-        table.clearFilter();
-        return;
-    }
-    table.setFilter((data) => columnNames.some((col) => String(data[col] ?? "").toLowerCase().includes(term)));
-});
+    // Global search box: match the typed term against any column value
+    document.getElementById("global-search").addEventListener("input", (e) => {
+        const term = e.target.value.trim().toLowerCase();
+        if (!term) {
+            table.clearFilter();
+            return;
+        }
+        table.setFilter((data) => columnNames.some((col) => String(data[col] ?? "").toLowerCase().includes(term)));
+    });
 
-document.getElementById("export-csv").addEventListener("click", () => table.download("csv", "table.csv"));
-document.getElementById("export-xlsx").addEventListener("click", () => table.download("xlsx", "table.xlsx", { sheetName: "Data" }));
-document.getElementById("export-pdf").addEventListener("click", () => table.download("pdf", "table.pdf", { orientation: "landscape", title: "Table" }));
+    // Export buttons, one per file format
+    document.getElementById("export-csv").addEventListener("click", (e) => { e.preventDefault(); table.download("csv", "table.csv"); });
+    document.getElementById("export-xlsx").addEventListener("click", (e) => { e.preventDefault(); table.download("xlsx", "table.xlsx", { sheetName: "Data" }); });
+    document.getElementById("export-pdf").addEventListener("click", (e) => { e.preventDefault(); table.download("pdf", "table.pdf", { orientation: "landscape", title: "Table" }); });
     </script>
 {% endblock %}

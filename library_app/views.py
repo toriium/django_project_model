@@ -13,7 +13,7 @@ def home(request):
     return render(request, "library_app/home.html")
 
 
-def generate_generic_table(request, values: list[BaseModel]):
+def generate_generic_table(request, table_name: str, values: list[BaseModel] ):
     if not values:
         columns = []
         data = []
@@ -22,6 +22,7 @@ def generate_generic_table(request, values: list[BaseModel]):
         columns = list(values[0].model_fields.keys())
         data = [list(v.model_dump().values()) for v in values]
     context = {
+        "table_name": table_name,
         "columns": columns,
         "data": data,
     }
@@ -59,7 +60,7 @@ def people_table(request):
             active=True,
         ),
     ]
-    return generate_generic_table(request, people)
+    return generate_generic_table(request, table_name="People", values=people)
 
 
 def books_table(request):
@@ -78,7 +79,7 @@ def books_table(request):
         )
         for book in Book.objects.select_related("author").all()
     ]
-    return generate_generic_table(request, books)
+    return generate_generic_table(request, table_name="Books", values=books)
 
 
 @login_not_required

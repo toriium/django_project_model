@@ -1,38 +1,36 @@
-{% extends "library_app/base.html" %}
-{% block content %}
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/tabulator-tables@6/dist/css/tabulator_bootstrap5.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/tabulator-tables@6/dist/js/tabulator.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
-    <div class="container-fluid mt-4 h-100 d-flex flex-column">
-        <h1>{{ table_name }}</h1>
-        <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
-            <input type="text"
-                   id="global-search"
-                   class="form-control form-control-sm w-auto"
-                   placeholder="Global Search...">
-            <div class="dropdown">
-                <button class="btn btn-sm btn-outline-secondary"
-                        type="button"
-                        data-bs-toggle="dropdown">
-                    <i class="bi bi-download"></i>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a id="export-csv" class="dropdown-item" href="#">CSV</a></li>
-                    <li><a id="export-xlsx" class="dropdown-item" href="#">XLSX</a></li>
-                    <li><a id="export-pdf" class="dropdown-item" href="#">PDF</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="flex-grow-1 d-flex flex-column" style="min-width:0">
-            <div id="genericTable" class="table-sm table-bordered" style="min-width:0"></div>
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/tabulator-tables@6/dist/css/tabulator_bootstrap5.min.css">
+<script src="https://cdn.jsdelivr.net/npm/tabulator-tables@6/dist/js/tabulator.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+<div class="container-fluid mt-4 h-100 d-flex flex-column">
+    <h1>{{ table_name }}</h1>
+    <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+        <input type="text"
+               id="global-search"
+               class="form-control form-control-sm w-auto"
+               placeholder="Global Search...">
+        <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary"
+                    type="button"
+                    data-bs-toggle="dropdown">
+                <i class="bi bi-download"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a id="export-csv" class="dropdown-item" href="#">CSV</a></li>
+                <li><a id="export-xlsx" class="dropdown-item" href="#">XLSX</a></li>
+                <li><a id="export-pdf" class="dropdown-item" href="#">PDF</a></li>
+            </ul>
         </div>
     </div>
-    {{ columns|json_script:"columns-data" }}
-    {{ data|json_script:"table-data" }}
-    <script>
+    <div class="flex-grow-1 d-flex flex-column" style="min-width:0">
+        <div id="genericTable" class="table-sm table-bordered" style="min-width:0"></div>
+    </div>
+</div>
+{{ columns|json_script:"columns-data" }}
+{{ data|json_script:"table-data" }}
+<script>
     // Read column names and row data injected by Django via json_script
     const columnNames = JSON.parse(document.getElementById('columns-data').textContent);
     const rows = JSON.parse(document.getElementById('table-data').textContent);
@@ -88,5 +86,4 @@
     document.getElementById("export-csv").addEventListener("click", (e) => { e.preventDefault(); table.download("csv", "table.csv"); });
     document.getElementById("export-xlsx").addEventListener("click", (e) => { e.preventDefault(); table.download("xlsx", "table.xlsx", { sheetName: "Data" }); });
     document.getElementById("export-pdf").addEventListener("click", (e) => { e.preventDefault(); table.download("pdf", "table.pdf", { orientation: "landscape", title: "Table" }); });
-    </script>
-{% endblock %}
+</script>

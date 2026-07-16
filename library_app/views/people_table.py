@@ -1,8 +1,9 @@
 from datetime import date, datetime
 
+from django.shortcuts import render
 from pydantic import BaseModel
 
-from library_app.views.shared_views import generate_generic_table
+from library_app.views.shared_views import build_table_context
 
 
 def people_table(request):
@@ -43,4 +44,5 @@ def people_table(request):
         ],
     ]
 
-    return generate_generic_table(request, table_name="People", values=people_list)
+    context = build_table_context(table_name="People", values=people_list)
+    return render(request, "library_app/people_table.html", context)

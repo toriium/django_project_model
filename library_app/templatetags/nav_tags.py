@@ -34,7 +34,7 @@ class Icons:
 
 
 @register.simple_tag
-def get_nav_items() -> list[NavItem| NavGroup]:
+def get_nav_items() -> list[NavItem | NavGroup]:
     home_nav = NavItem(
         label="Home",
         icon=Icons.HOME,

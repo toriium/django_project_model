@@ -9,4 +9,4 @@ logs:
 local:
 	uv run python manage.py runserver
 format:
-	djlint . --reformat
+	djlint . --reformat && ruff format

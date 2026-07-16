@@ -53,19 +53,18 @@ def people_table(request):
             active=False,
         ),
         PeopleTable(
-            name="Charlie",
-            age=35,
-            birthday=date(1988, 3, 10),
-            created_at=datetime(2023, 1, 3, 12, 0, 0),
-            active=True
+            name="Charlie", age=35, birthday=date(1988, 3, 10), created_at=datetime(2023, 1, 3, 12, 0, 0), active=True
         ),
-        *[PeopleTable(
-            name=f"Person {i}",
-            age=i,
-            birthday=date(1993, 5, 15),
-            created_at=datetime(2023, 1, 1, 10, 0, 0),
-            active=True
-        ) for i in range(1, 200)] 
+        *[
+            PeopleTable(
+                name=f"Person {i}",
+                age=i,
+                birthday=date(1993, 5, 15),
+                created_at=datetime(2023, 1, 1, 10, 0, 0),
+                active=True,
+            )
+            for i in range(1, 200)
+        ],
     ]
 
     return generate_generic_table(request, table_name="People", values=people_list)

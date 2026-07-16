@@ -74,7 +74,6 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "django" },
-    { name = "djlint" },
     { name = "gunicorn" },
     { name = "psycopg2-binary" },
     { name = "pydantic" },
@@ -90,7 +89,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "django", specifier = ">=6.0,<7.0" },
-    { name = "djlint", specifier = ">=1.40.6" },
     { name = "gunicorn", specifier = ">=23.0.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.11,<3.0.0" },
     { name = "pydantic", specifier = ">=2.13.3" },

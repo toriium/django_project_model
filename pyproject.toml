@@ -10,7 +10,6 @@ dependencies = [
     "psycopg2-binary (>=2.9.11,<3.0.0)",
     "pydantic>=2.13.3",
     "gunicorn>=23.0.0",
-    "djlint>=1.40.6",
 ]
 
 [dependency-groups]
@@ -22,3 +21,12 @@ dev = [
 [tool.ruff]
 line-length = 120
 target-version = "py312"
+
+[tool.ruff.lint]
+ignore = []
+
+fixable = ["A", "B", "C", "D", "E", "F", "I"]
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]

@@ -5,33 +5,36 @@
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 {% with uid=table.table_name|slugify columns_id="columns-data-"|add:table.table_name|slugify data_id="table-data-"|add:table.table_name|slugify %}
-<div class="container-fluid mt-4 d-flex flex-column border border-secondary-subtle rounded-3 p-3">
-    <h1>{{ table.table_name }}</h1>
-    <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
-        <input type="text"
-               id="global-search-{{ uid }}"
-               class="form-control form-control-sm w-auto"
-               placeholder="Global Search...">
-        <div class="dropdown">
-            <button class="btn btn-sm btn-outline-secondary"
-                    type="button"
-                    data-bs-toggle="dropdown">
-                <i class="bi bi-download"></i>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a id="export-csv-{{ uid }}" class="dropdown-item" href="#">CSV</a></li>
-                <li><a id="export-xlsx-{{ uid }}" class="dropdown-item" href="#">XLSX</a></li>
-                <li><a id="export-pdf-{{ uid }}" class="dropdown-item" href="#">PDF</a></li>
-            </ul>
+    <div class="container-fluid mt-4 d-flex flex-column border border-secondary-subtle rounded-3 p-3">
+        <h1>{{ table.table_name }}</h1>
+        {% if table.description %}<p class="text-muted">{{ table.description }}</p>{% endif %}
+        <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+            <input type="text"
+                   id="global-search-{{ uid }}"
+                   class="form-control form-control-sm w-auto"
+                   placeholder="Global Search...">
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary"
+                        type="button"
+                        data-bs-toggle="dropdown">
+                    <i class="bi bi-download"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a id="export-csv-{{ uid }}" class="dropdown-item" href="#">CSV</a></li>
+                    <li><a id="export-xlsx-{{ uid }}" class="dropdown-item" href="#">XLSX</a></li>
+                    <li><a id="export-pdf-{{ uid }}" class="dropdown-item" href="#">PDF</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="d-flex flex-column" style="min-width:0">
+            <div id="genericTable-{{ uid }}"
+                 class="table-sm table-bordered"
+                 style="min-width:0"></div>
         </div>
     </div>
-    <div class="d-flex flex-column" style="min-width:0">
-        <div id="genericTable-{{ uid }}" class="table-sm table-bordered" style="min-width:0"></div>
-    </div>
-</div>
-{{ table.columns|json_script:columns_id }}
-{{ table.data|json_script:data_id }}
-<script>
+    {{ table.columns|json_script:columns_id }}
+    {{ table.data|json_script:data_id }}
+    <script>
 (function () {
     // Read column names and row data injected by Django via json_script
     const columnNames = JSON.parse(document.getElementById('{{ columns_id }}').textContent);
@@ -89,5 +92,5 @@
     document.getElementById("export-xlsx-{{ uid }}").addEventListener("click", (e) => { e.preventDefault(); table.download("xlsx", "table.xlsx", { sheetName: "Data" }); });
     document.getElementById("export-pdf-{{ uid }}").addEventListener("click", (e) => { e.preventDefault(); table.download("pdf", "table.pdf", { orientation: "landscape", title: "Table" }); });
 })();
-</script>
+    </script>
 {% endwith %}

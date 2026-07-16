@@ -1,0 +1,5 @@
+{% extends "library_app/base.html" %}
+{% block content %}
+    {% include "library_app/generic_table.html" with table=color_table only %}
+    {% include "library_app/generic_table.html" with table=liquid_table only %}
+{% endblock %}

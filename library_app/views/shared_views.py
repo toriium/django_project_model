@@ -2,7 +2,7 @@ from django.shortcuts import render
 from pydantic import BaseModel
 
 
-def build_table_context(table_name: str, values: list[BaseModel]) -> dict:
+def build_table_context(table_name: str, values: list[BaseModel], description: str = "") -> dict:
     if not values:
         columns = []
         data = []
@@ -14,6 +14,7 @@ def build_table_context(table_name: str, values: list[BaseModel]) -> dict:
         "table_name": table_name,
         "columns": columns,
         "data": data,
+        "description": description,
     }
 
 

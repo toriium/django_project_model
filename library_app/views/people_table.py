@@ -44,5 +44,6 @@ def people_table(request):
         ],
     ]
 
-    context = {"table": build_table_context(table_name="People", values=people_list)}
+    table_context = build_table_context(table_name="People", values=people_list, description="Table containing random people data for testing purposes.")
+    context = {"table": table_context}
     return render(request, "library_app/people_table.html", context)

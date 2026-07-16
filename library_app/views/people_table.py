@@ -6,14 +6,14 @@ from pydantic import BaseModel
 from library_app.views.shared_views import build_table_context
 
 
-def people_table(request):
-    class PeopleTable(BaseModel):
-        name: str
-        age: int
-        birthday: date
-        created_at: datetime
-        active: bool
+class PeopleTable(BaseModel):
+    name: str
+    age: int
+    birthday: date
+    created_at: datetime
+    active: bool
 
+def people_table(request):
     people_list = [
         PeopleTable(
             name="Alice",
@@ -44,5 +44,5 @@ def people_table(request):
         ],
     ]
 
-    context = build_table_context(table_name="People", values=people_list)
+    context = {"table": build_table_context(table_name="People", values=people_list)}
     return render(request, "library_app/people_table.html", context)

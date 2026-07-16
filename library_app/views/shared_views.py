@@ -18,5 +18,5 @@ def build_table_context(table_name: str, values: list[BaseModel]) -> dict:
 
 
 def generate_generic_table(request, table_name: str, values: list[BaseModel]):
-    context = build_table_context(table_name, values)
+    context = {"table": build_table_context(table_name, values)}
     return render(request, "library_app/table_page.html", context)

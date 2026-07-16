@@ -40,7 +40,7 @@ def get_nav_items() -> list[NavItem | NavGroup]:
         icon=Icons.HOME,
         url_name="home",
     )
-    tebles_children = [
+    tables_children = [
         NavItem(
             label="Books",
             icon=Icons.BOOKS,
@@ -51,11 +51,16 @@ def get_nav_items() -> list[NavItem | NavGroup]:
             icon=Icons.PEOPLE,
             url_name="people_table",
         ),
+        NavItem(
+            label="Multi Table",
+            icon=Icons.TABLES,
+            url_name="multi_table",
+        ),
     ]
     tables_nav = NavGroup(
         label="Tables",
         icon=Icons.TABLES,
-        nav_items_list=tebles_children,
+        nav_items_list=tables_children,
     )
     django_admin_nav = NavItem(
         label="Django Admin",

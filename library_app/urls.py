@@ -9,6 +9,7 @@ urlpatterns = [
     path("multi_table/", views.multi_table, name="multi_table"),
     path("public/", views.public, name="public"),
     path("test-fetch/", views.test_fetch, name="test_fetch"),
+    path("test-post/", views.test_post, name="test_post"),
     path("test/404/", views.trigger_404, name="trigger_404"),
     path("test/500/", views.trigger_500, name="trigger_500"),
 ]

@@ -1,0 +1,31 @@
+{% extends "library_app/base.html" %}
+{% block title %}Test Post - Admin Panel{% endblock %}
+{% block page_title %}Test Post{% endblock %}
+{% block content %}
+    {% csrf_token %}
+    <div x-data="{
+             inputText: '',
+             resultText: '',
+             async sendText() {
+                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                 const response = await fetch('/api/test-post/', {
+                     method: 'POST',
+                     headers: {
+                         'Content-Type': 'application/json',
+                         'X-CSRFToken': csrfToken,
+                     },
+                     body: JSON.stringify({ text: this.inputText }),
+                 });
+                 const data = await response.json();
+                 this.resultText = data.text;
+             },
+         }"
+         style="width: 320px">
+        <input type="text"
+               x-model="inputText"
+               class="form-control mb-3"
+               placeholder="Enter some text">
+        <button class="btn btn-primary mb-3" @click="sendText()">Send to API</button>
+        <input type="text" x-model="resultText" class="form-control" readonly>
+    </div>
+{% endblock %}

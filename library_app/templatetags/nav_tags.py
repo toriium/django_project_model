@@ -32,6 +32,7 @@ class Icons:
     TEST_404 = "bi-exclamation-triangle"
     TEST_500 = "bi-exclamation-octagon"
     TEST_FETCH = "bi-cloud-arrow-down"
+    TEST_POST = "bi-send"
 
 
 @register.simple_tag
@@ -89,6 +90,11 @@ def get_nav_items() -> list[NavItem | NavGroup]:
         icon=Icons.TEST_FETCH,
         url_name="test_fetch",
     )
+    test_post_nav = NavItem(
+        label="Test Post",
+        icon=Icons.TEST_POST,
+        url_name="test_post",
+    )
     return [
         home_nav,
         tables_nav,
@@ -97,6 +103,7 @@ def get_nav_items() -> list[NavItem | NavGroup]:
         test_404_nav,
         test_500_nav,
         test_fetch_nav,
+        test_post_nav,
     ]
 
 

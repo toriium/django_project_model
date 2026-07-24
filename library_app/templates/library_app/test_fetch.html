@@ -2,17 +2,16 @@
 {% block title %}Test Fetch - Admin Panel{% endblock %}
 {% block page_title %}Test Fetch{% endblock %}
 {% block content %}
-    <div style="width: 320px">
-        <input type="text" id="result-field" class="form-control mb-3" readonly>
-        <button id="fetch-btn" class="btn btn-primary">Fetch from API</button>
+    <div x-data="{
+             resultText: '',
+             async fetchText() {
+                 const response = await fetch('/api/test-fetch/');
+                 const data = await response.json();
+                 this.resultText = data.text;
+             },
+         }"
+         style="width: 320px">
+        <input type="text" x-model="resultText" class="form-control mb-3" readonly>
+        <button class="btn btn-primary" @click="fetchText()">Fetch from API</button>
     </div>
-{% endblock %}
-{% block extra_scripts %}
-    <script>
-    document.getElementById('fetch-btn').addEventListener('click', async function () {
-        const response = await fetch('/api/test-fetch/');
-        const data = await response.json();
-        document.getElementById('result-field').value = data.text;
-    });
-    </script>
 {% endblock %}

@@ -9,12 +9,10 @@
 {% endblock %}
 {% block extra_scripts %}
     <script>
-    document.getElementById('fetch-btn').addEventListener('click', function () {
-        fetch('/api/test-fetch/')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('result-field').value = data.text;
-            });
+    document.getElementById('fetch-btn').addEventListener('click', async function () {
+        const response = await fetch('/api/test-fetch/');
+        const data = await response.json();
+        document.getElementById('result-field').value = data.text;
     });
     </script>
 {% endblock %}

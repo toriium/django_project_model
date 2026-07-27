@@ -1,5 +1,4 @@
 import math
-from typing import List
 
 from ninja import NinjaAPI, Schema
 from ninja.security import django_auth
@@ -18,25 +17,31 @@ class TextPayload(Schema):
     text: str
 
 class TableSchema(Schema):
-    columns: List[str]
-    rows: List[dict]
     limit: int
     offset: int
     qtd_pages: int
+    columns: list[str]
+    rows: list[dict]
 
 
-def build_response_table(table, limit: int, offset: int) -> TableSchema:
+def build_model_response_table(table, limit: int, offset: int, fields: list[str]) -> TableSchema:
     qtd_all_rows = table.objects.count()
-    columns = [field.name for field in table._meta.fields]
-    rows = list(table.objects.all()[offset:offset + limit].values())
     qtd_pages = math.ceil(qtd_all_rows / limit)
 
+    # Fields that will be displayed in the table
+    remove_fields = ["id", "created_at", "updated_at"]
+    all_fields = [field.name for field in table._meta.fields]
+    columns = fields if fields else all_fields
+    columns = [column for column in columns if column not in remove_fields]
+
+    rows = list(table.objects.all()[offset:offset + limit].values(*columns))
+
     return TableSchema(
-        columns=columns,
-        rows=rows,
         limit=limit,
         offset=offset,
-        qtd_pages=qtd_pages
+        qtd_pages=qtd_pages,
+        columns=columns,
+        rows=rows,
     )
 
 
@@ -48,4 +53,4 @@ def test_post(request, payload: TextPayload):
 
 @api.get("/authors", response=TableSchema)
 def list_authors(request, limit: int = 10, offset: int = 0):
-    return build_response_table(table=Author, limit=limit, offset=offset)
+    return build_model_response_table(table=Author, limit=limit, offset=offset, fields=[])

@@ -1,4 +1,8 @@
 {% extends "library_app/base.html" %}
 {% block content %}
-    {% include "library_app/generic_table.html" with table=table only %}
+    {% if table.table_type == "dynamic" %}
+        {% include "library_app/dynamic_table.html" with table=table only %}
+    {% else %}
+        {% include "library_app/generic_table.html" with table=table only %}
+    {% endif %}
 {% endblock %}

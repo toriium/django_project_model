@@ -1,0 +1,97 @@
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/tabulator-tables@6/dist/css/tabulator_bootstrap5.min.css">
+<script src="https://cdn.jsdelivr.net/npm/tabulator-tables@6/dist/js/tabulator.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+{% with uid=table.table_name|slugify %}
+    <div class="container-fluid mt-4 d-flex flex-column border border-secondary-subtle rounded-3 p-3">
+        <h1>{{ table.table_name }}</h1>
+        {% if table.description %}<p class="text-muted">{{ table.description }}</p>{% endif %}
+        <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+            <input type="text"
+                   id="global-search-{{ uid }}"
+                   class="form-control form-control-sm w-auto"
+                   placeholder="Global Search...">
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary"
+                        type="button"
+                        data-bs-toggle="dropdown">
+                    <i class="bi bi-download"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a id="export-csv-{{ uid }}" class="dropdown-item" href="#">CSV</a></li>
+                    <li><a id="export-xlsx-{{ uid }}" class="dropdown-item" href="#">XLSX</a></li>
+                    <li><a id="export-pdf-{{ uid }}" class="dropdown-item" href="#">PDF</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="d-flex flex-column" style="min-width:0">
+            <div id="dynamicTable-{{ uid }}"
+                 class="table-sm table-bordered"
+                 style="min-width:0"></div>
+        </div>
+    </div>
+    <script>
+(async function () {
+    const apiUrl = "{{ table.url_name }}";
+    const pageSize = 15;
+
+    // First page also tells us which columns exist and what type of data they hold
+    const initial = await (await fetch(`${apiUrl}?limit=${pageSize}&offset=0`)).json();
+
+    // Pick a header filter type based on the column's data type
+    function filterTypeFor(field) {
+        const sample = initial.rows.find(row => row[field] !== null && row[field] !== undefined);
+        const value = sample ? sample[field] : null;
+        if (typeof value === "boolean") {
+            // true/false/all filter
+            return { headerFilter: "tickCross", headerFilterParams: { tristate: true }, formatter: "tickCross" };
+        }
+        if (typeof value === "number") {
+            // ">=" numeric filter
+            return { headerFilter: "number", headerFilterFunc: ">=" };
+        }
+        // plain text filter (a "list" dropdown would only reflect the page currently loaded)
+        return { headerFilter: "input" };
+    }
+
+    // Build the table, generating one column per field with its matching filter
+    const table = new Tabulator("#dynamicTable-{{ uid }}", {
+        layout: "fitColumns",
+        pagination: true,
+        paginationMode: "remote",
+        paginationSize: pageSize,
+        paginationSizeSelector: [10, 15, 25, 50, 100],
+        paginationCounter: "rows",
+        columns: initial.columns.map(col => ({
+            title: col.charAt(0).toUpperCase() + col.slice(1),
+            field: col,
+            ...filterTypeFor(col),
+        })),
+        ajaxURL: apiUrl,
+        ajaxURLGenerator: (url, config, params) => {
+            const size = params.size || pageSize;
+            const page = params.page || 1;
+            return `${url}?limit=${size}&offset=${(page - 1) * size}`;
+        },
+        ajaxResponse: (url, params, response) => ({ data: response.rows, last_page: response.qtd_pages }),
+    });
+
+    // Global search box: matches the typed term against the currently loaded page
+    document.getElementById("global-search-{{ uid }}").addEventListener("input", (e) => {
+        const term = e.target.value.trim().toLowerCase();
+        if (!term) {
+            table.clearFilter();
+            return;
+        }
+        table.setFilter((data) => Object.values(data).some((value) => String(value ?? "").toLowerCase().includes(term)));
+    });
+
+    // Export buttons act on the currently loaded page only, since data is paginated remotely
+    document.getElementById("export-csv-{{ uid }}").addEventListener("click", (e) => { e.preventDefault(); table.download("csv", "table.csv"); });
+    document.getElementById("export-xlsx-{{ uid }}").addEventListener("click", (e) => { e.preventDefault(); table.download("xlsx", "table.xlsx", { sheetName: "Data" }); });
+    document.getElementById("export-pdf-{{ uid }}").addEventListener("click", (e) => { e.preventDefault(); table.download("pdf", "table.pdf", { orientation: "landscape", title: "Table" }); });
+})();
+    </script>
+{% endwith %}

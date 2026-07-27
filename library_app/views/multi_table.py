@@ -8,6 +8,7 @@ class LiquidTable(BaseModel):
     name: str
     mls: int
 
+
 class ColorTable(BaseModel):
     name: str
     value: int

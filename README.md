@@ -1,5 +1,8 @@
 # django_project_model
 
+# Urls
+- http://localhost:8000/api/docs
+
 # Commands
 django-admin startproject core .
 python manage.py startapp <app_name>

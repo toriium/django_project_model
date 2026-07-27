@@ -13,6 +13,7 @@ class PeopleTable(BaseModel):
     created_at: datetime
     active: bool
 
+
 def people_table(request):
     people_list = [
         PeopleTable(
@@ -44,6 +45,8 @@ def people_table(request):
         ],
     ]
 
-    table_context = build_static_table_context(table_name="People", values=people_list, description="Table containing random people data for testing purposes.")
+    table_context = build_static_table_context(
+        table_name="People", values=people_list, description="Table containing random people data for testing purposes."
+    )
     context = {"table": table_context}
     return render(request, "library_app/people_table.html", context)

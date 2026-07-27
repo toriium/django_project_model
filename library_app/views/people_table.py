@@ -3,7 +3,7 @@ from datetime import date, datetime
 from django.shortcuts import render
 from pydantic import BaseModel
 
-from library_app.views.shared_views import build_table_context
+from library_app.views.shared_views import build_static_table_context
 
 
 class PeopleTable(BaseModel):
@@ -44,6 +44,6 @@ def people_table(request):
         ],
     ]
 
-    table_context = build_table_context(table_name="People", values=people_list, description="Table containing random people data for testing purposes.")
+    table_context = build_static_table_context(table_name="People", values=people_list, description="Table containing random people data for testing purposes.")
     context = {"table": table_context}
     return render(request, "library_app/people_table.html", context)

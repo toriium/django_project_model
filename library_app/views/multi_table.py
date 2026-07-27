@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from pydantic import BaseModel
 
-from library_app.views.shared_views import build_table_context
+from library_app.views.shared_views import build_static_table_context
 
 
 class LiquidTable(BaseModel):
@@ -24,8 +24,8 @@ def multi_table(request):
         LiquidTable(name="Juice", mls=300),
     ]
 
-    color_context = build_table_context(table_name="color", values=color_list)
-    liquid_context = build_table_context(table_name="liquid", values=liquid_list)
+    color_context = build_static_table_context(table_name="color", values=color_list)
+    liquid_context = build_static_table_context(table_name="liquid", values=liquid_list)
     context = {
         "color_table": color_context,
         "liquid_table": liquid_context,

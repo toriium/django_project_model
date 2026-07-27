@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from .shared_views import generate_generic_table
+from .shared_views import generate_static_table_html
 from ..models import Author
 
 
@@ -16,4 +16,4 @@ def authors_table(request):
         )
         for author in Author.objects.all()
     ]
-    return generate_generic_table(request, table_name="Authors", values=authors)
+    return generate_static_table_html(request, table_name="Authors", values=authors)

@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from .shared_views import generate_generic_table
+from .shared_views import generate_static_table_html
 from ..models import Book
 
 
@@ -22,4 +22,4 @@ def books_table(request):
         )
         for book in Book.objects.select_related("author").all()
     ]
-    return generate_generic_table(request, table_name="Books", values=books)
+    return generate_static_table_html(request, table_name="Books", values=books)

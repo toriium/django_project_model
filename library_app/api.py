@@ -27,9 +27,8 @@ class TableSchema(Schema):
 
 def build_response_table(table, limit: int, offset: int) -> TableSchema:
     qtd_all_rows = table.objects.count()
-    query_result = table.objects.all()[offset:offset + limit]
     columns = [field.name for field in table._meta.fields]
-    rows = [{column: getattr(query_rows, column) for column in columns} for query_rows in query_result]
+    rows = list(table.objects.all()[offset:offset + limit].values())
     qtd_pages = math.ceil(qtd_all_rows / limit)
 
     return TableSchema(

@@ -8,7 +8,7 @@ python manage.py startapp <app_name>
 python manage.py createsuperuser
 
 # ORM Migrations
-python manage.py makemigrations
+python manage.py makemigrations --name DESC
 python manage.py migrate
 python manage.py inspectdb > inspect_models.py
 

@@ -33,6 +33,7 @@ class Icons:
     TEST_500 = "bi-exclamation-octagon"
     TEST_FETCH = "bi-cloud-arrow-down"
     TEST_POST = "bi-send"
+    AUTHORS = "bi-person-badge"
 
 
 @register.simple_tag
@@ -57,6 +58,11 @@ def get_nav_items() -> list[NavItem | NavGroup]:
             label="Multi Table",
             icon=Icons.TABLES,
             url_name="multi_table",
+        ),
+        NavItem(
+            label="Authors",
+            icon=Icons.AUTHORS,
+            url_name="authors_table",
         ),
     ]
     tables_nav = NavGroup(

@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+from math import ceil
+
 from ninja import NinjaAPI, Schema
 from ninja.security import django_auth
 
@@ -16,3 +19,10 @@ class TextPayload(Schema):
 @api.post("/test-post/", auth=django_auth)
 def test_post(request, payload: TextPayload):
     return {"text": payload.text}
+
+
+@api.get("/authors/", auth=django_auth)
+def authors_list(request, page: int = 1, size: int = 15):
+    last_page = max(1, ceil(len(AUTHORS) / size))
+    start = (page - 1) * size
+    return {"data": AUTHORS[start : start + size], "last_page": last_page}

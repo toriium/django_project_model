@@ -7,27 +7,23 @@
         so each field only receives the value from the search bar next to it.
     </p>
     <div class="d-flex flex-column gap-4">
-        <div x-data="{ selected_value: '' }"
+        <div x-data="{ selected_value: null }"
              @search-bar-select="selected_value = $event.detail.value"
              style="width: 320px">
             {% include "components/search_bar/search_bar.html" with search_bar=fruit_search only %}
             <label for="selected-fruit" class="form-label mt-3">Selected fruit</label>
-            <input type="text"
-                   id="selected-fruit"
-                   class="form-control"
-                   x-model="selected_value"
-                   readonly>
+            <pre id="selected-fruit"
+                 class="form-control"
+                 x-text="selected_value ? JSON.stringify(selected_value, null, 2) : 'Nothing selected'"></pre>
         </div>
-        <div x-data="{ selected_value: '' }"
+        <div x-data="{ selected_value: null }"
              @search-bar-select="selected_value = $event.detail.value"
              style="width: 320px">
             {% include "components/search_bar/search_bar.html" with search_bar=color_search only %}
             <label for="selected-color" class="form-label mt-3">Selected color</label>
-            <input type="text"
-                   id="selected-color"
-                   class="form-control"
-                   x-model="selected_value"
-                   readonly>
+            <pre id="selected-color"
+                 class="form-control"
+                 x-text="selected_value ? JSON.stringify(selected_value, null, 2) : 'Nothing selected'"></pre>
         </div>
     </div>
 {% endblock %}

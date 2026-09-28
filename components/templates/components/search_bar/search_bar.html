@@ -5,13 +5,13 @@
             query: '',
             open: false,
             values: JSON.parse(document.getElementById('{{ values_id }}').textContent),
-            // Case-insensitive substring match against every possible value
+            // Case-insensitive substring match against each value's label
             get filtered() {
                 const term = this.query.trim().toLowerCase();
-                return this.values.filter(value => value.toLowerCase().includes(term));
+                return this.values.filter(value => value.label.toLowerCase().includes(term));
             },
             select(value) {
-                this.query = value;
+                this.query = value.label;
                 this.open = false;
                 // Let the page react to the chosen value (e.g. @search-bar-select on a parent)
                 this.$dispatch('search-bar-select', { name: '{{ search_bar.name }}', value });
@@ -34,11 +34,11 @@
                    max-height:240px;
                    display:none"
             x-show="open">
-            <template x-for="value in filtered" :key="value">
+            <template x-for="(value, index) in filtered" :key="index">
                 <li>
                     <button type="button"
                             class="list-group-item list-group-item-action"
-                            x-text="value"
+                            x-text="value.label"
                             @click="select(value)"></button>
                 </li>
             </template>

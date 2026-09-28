@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from pydantic import BaseModel
 
-from library_app.views.shared_views import build_static_table_context
+from components.tables import build_static_table_context
 
 
 class LiquidTable(BaseModel):

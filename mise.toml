@@ -1,0 +1,20 @@
+[tasks.up]
+run = "docker compose up -d --build"
+
+[tasks.down]
+run = "docker compose down"
+
+[tasks.logs]
+run = "docker compose logs -f"
+
+[tasks.local]
+run = "uv run python manage.py runserver"
+
+[tasks.format]
+run = "djlint . --reformat && ruff format && ruff check --fix"
+
+[tasks.makemigrations]
+run = "uv run python manage.py makemigrations"
+
+[tasks.migrate]
+run = "uv run python manage.py migrate"

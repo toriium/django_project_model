@@ -1,0 +1,9 @@
+{% extends "library_app/base.html" %}
+{% block title %}Search Bar - Admin Panel{% endblock %}
+{% block page_title %}Search Bar{% endblock %}
+{% block content %}
+    <p class="text-muted">Start typing to filter the fruits by any part of the name.</p>
+    <div style="width: 320px">
+        {% include "components/search_bar/search_bar.html" with search_bar=fruit_search only %}
+    </div>
+{% endblock %}

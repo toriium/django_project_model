@@ -1,0 +1,45 @@
+{% with uid=search_bar.name|slugify values_id="search-bar-values-"|add:search_bar.name|slugify %}
+    {{ search_bar.values|json_script:values_id }}
+    <div class="position-relative"
+         x-data="{
+            query: '',
+            open: false,
+            values: JSON.parse(document.getElementById('{{ values_id }}').textContent),
+            // Case-insensitive substring match against every possible value
+            get filtered() {
+                const term = this.query.trim().toLowerCase();
+                return this.values.filter(value => value.toLowerCase().includes(term));
+            },
+            select(value) {
+                this.query = value;
+                this.open = false;
+            },
+         }"
+         @click.outside="open = false">
+        <input type="text"
+               id="search-bar-{{ uid }}"
+               name="{{ search_bar.name }}"
+               class="form-control"
+               placeholder="{{ search_bar.placeholder }}"
+               autocomplete="off"
+               x-model="query"
+               @focus="open = true"
+               @input="open = true"
+               @keydown.escape="open = false">
+        <ul class="list-group position-absolute w-100 shadow-sm overflow-auto"
+            style="z-index:1000;
+                   max-height:240px;
+                   display:none"
+            x-show="open">
+            <template x-for="value in filtered" :key="value">
+                <li>
+                    <button type="button"
+                            class="list-group-item list-group-item-action"
+                            x-text="value"
+                            @click="select(value)"></button>
+                </li>
+            </template>
+            <li class="list-group-item text-muted" x-show="filtered.length === 0">No results</li>
+        </ul>
+    </div>
+{% endwith %}

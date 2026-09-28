@@ -34,6 +34,7 @@ class Icons:
     TEST_FETCH = "bi-cloud-arrow-down"
     TEST_POST = "bi-send"
     AUTHORS = "bi-person-badge"
+    SEARCH_BAR = "bi-search"
 
 
 @register.simple_tag
@@ -101,6 +102,11 @@ def get_nav_items() -> list[NavItem | NavGroup]:
         icon=Icons.TEST_POST,
         url_name="test_post",
     )
+    search_bar_nav = NavItem(
+        label="Search Bar",
+        icon=Icons.SEARCH_BAR,
+        url_name="search_bar_example",
+    )
     return [
         home_nav,
         tables_nav,
@@ -110,6 +116,7 @@ def get_nav_items() -> list[NavItem | NavGroup]:
         test_500_nav,
         test_fetch_nav,
         test_post_nav,
+        search_bar_nav,
     ]
 
 

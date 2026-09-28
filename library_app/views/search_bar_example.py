@@ -30,5 +30,9 @@ def search_bar_example(request):
         "Strawberry",
         "Watermelon",
     ]
-    context = {"fruit_search": build_search_bar_context(name="fruit", values=fruits, placeholder="Type a fruit...")}
+    colors = ["Black", "Blue", "Brown", "Cyan", "Gray", "Green", "Orange", "Pink", "Purple", "Red", "White", "Yellow"]
+    context = {
+        "fruit_search": build_search_bar_context(name="fruit", values=fruits, placeholder="Type a fruit..."),
+        "color_search": build_search_bar_context(name="color", values=colors, placeholder="Type a color..."),
+    }
     return render(request, "library_app/search_bar_example.html", context)

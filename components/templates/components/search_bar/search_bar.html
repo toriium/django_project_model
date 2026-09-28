@@ -13,6 +13,8 @@
             select(value) {
                 this.query = value;
                 this.open = false;
+                // Let the page react to the chosen value (e.g. @search-bar-select on a parent)
+                this.$dispatch('search-bar-select', { name: '{{ search_bar.name }}', value });
             },
          }"
          @click.outside="open = false">

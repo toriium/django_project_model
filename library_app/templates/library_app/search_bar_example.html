@@ -2,8 +2,32 @@
 {% block title %}Search Bar - Admin Panel{% endblock %}
 {% block page_title %}Search Bar{% endblock %}
 {% block content %}
-    <p class="text-muted">Start typing to filter the fruits by any part of the name.</p>
-    <div style="width: 320px">
-        {% include "components/search_bar/search_bar.html" with search_bar=fruit_search only %}
+    <p class="text-muted">
+        Each search bar fires <code>search-bar-select</code>, which bubbles up only to its own wrapper,
+        so each field only receives the value from the search bar next to it.
+    </p>
+    <div class="d-flex flex-column gap-4">
+        <div x-data="{ selected_value: '' }"
+             @search-bar-select="selected_value = $event.detail.value"
+             style="width: 320px">
+            {% include "components/search_bar/search_bar.html" with search_bar=fruit_search only %}
+            <label for="selected-fruit" class="form-label mt-3">Selected fruit</label>
+            <input type="text"
+                   id="selected-fruit"
+                   class="form-control"
+                   x-model="selected_value"
+                   readonly>
+        </div>
+        <div x-data="{ selected_value: '' }"
+             @search-bar-select="selected_value = $event.detail.value"
+             style="width: 320px">
+            {% include "components/search_bar/search_bar.html" with search_bar=color_search only %}
+            <label for="selected-color" class="form-label mt-3">Selected color</label>
+            <input type="text"
+                   id="selected-color"
+                   class="form-control"
+                   x-model="selected_value"
+                   readonly>
+        </div>
     </div>
 {% endblock %}

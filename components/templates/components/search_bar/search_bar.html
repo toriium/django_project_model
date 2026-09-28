@@ -18,6 +18,7 @@
             },
          }"
          @click.outside="open = false">
+        <label for="search-bar-{{ uid }}" class="form-label">{{ search_bar.name|capfirst }}</label>
         <input type="text"
                id="search-bar-{{ uid }}"
                name="{{ search_bar.name }}"

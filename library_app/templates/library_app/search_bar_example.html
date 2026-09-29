@@ -9,21 +9,33 @@
     <div class="d-flex flex-column gap-4">
         <div x-data="{ selected_value: null }"
              @search-bar-select="selected_value = $event.detail.value"
-             style="width: 320px">
+             style="width: 640px">
             {% include "components/search_bar/search_bar.html" with search_bar=fruit_search only %}
-            <label for="selected-fruit" class="form-label mt-3">Selected fruit</label>
-            <pre id="selected-fruit"
-                 class="form-control"
-                 x-text="selected_value ? JSON.stringify(selected_value, null, 2) : 'Nothing selected'"></pre>
+            <div class="d-flex gap-3 mt-3">
+                <div class="w-50">
+                    <p class="form-label">Json</p>
+                    <pre class="form-control" x-text="JSON.stringify(selected_value, null, 2)"></pre>
+                </div>
+                <div class="w-50">
+                    <p class="form-label">Label</p>
+                    <div class="form-control" x-text="selected_value?.label"></div>
+                </div>
+            </div>
         </div>
         <div x-data="{ selected_value: null }"
              @search-bar-select="selected_value = $event.detail.value"
-             style="width: 320px">
+             style="width: 640px">
             {% include "components/search_bar/search_bar.html" with search_bar=color_search only %}
-            <label for="selected-color" class="form-label mt-3">Selected color</label>
-            <pre id="selected-color"
-                 class="form-control"
-                 x-text="selected_value ? JSON.stringify(selected_value, null, 2) : 'Nothing selected'"></pre>
+            <div class="d-flex gap-3 mt-3">
+                <div class="w-50">
+                    <p class="form-label">Json</p>
+                    <pre class="form-control" x-text="JSON.stringify(selected_value, null, 2)"></pre>
+                </div>
+                <div class="w-50">
+                    <p class="form-label">Label</p>
+                    <div class="form-control" x-text="selected_value?.label"></div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

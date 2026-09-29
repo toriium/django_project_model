@@ -61,6 +61,11 @@ def get_nav_items() -> list[NavItem | NavGroup]:
             url_name="multi_table",
         ),
         NavItem(
+            label="Simple Table",
+            icon=Icons.TABLES,
+            url_name="simple_table",
+        ),
+        NavItem(
             label="Authors",
             icon=Icons.AUTHORS,
             url_name="authors_table",

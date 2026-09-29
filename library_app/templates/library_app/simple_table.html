@@ -1,0 +1,6 @@
+{% extends "library_app/base.html" %}
+{% block title %}Simple Table - Admin Panel{% endblock %}
+{% block page_title %}Simple Table{% endblock %}
+{% block content %}
+    {% include "components/tables/simple_table.html" with table=color_table only %}
+{% endblock %}

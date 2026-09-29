@@ -7,6 +7,7 @@ urlpatterns = [
     path("people/", views.people_table, name="people_table"),
     path("books/", views.books_table, name="books_table"),
     path("multi_table/", views.multi_table, name="multi_table"),
+    path("simple_table/", views.simple_table, name="simple_table"),
     path("public/", views.public, name="public"),
     path("test-fetch/", views.test_fetch, name="test_fetch"),
     path("test-post/", views.test_post, name="test_post"),

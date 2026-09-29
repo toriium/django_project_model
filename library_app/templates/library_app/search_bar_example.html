@@ -37,5 +37,20 @@
                 </div>
             </div>
         </div>
+        <div x-data="{ selected_value: null }"
+             @search-bar-select="selected_value = $event.detail.value"
+             style="width: 640px">
+            {% include "components/search_bar/search_bar.html" with search_bar=color_search_preselected only %}
+            <div class="d-flex gap-3 mt-3">
+                <div class="w-50">
+                    <p class="form-label">Json</p>
+                    <pre class="form-control" x-text="JSON.stringify(selected_value, null, 2)"></pre>
+                </div>
+                <div class="w-50">
+                    <p class="form-label">Label</p>
+                    <div class="form-control" x-text="selected_value?.label"></div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

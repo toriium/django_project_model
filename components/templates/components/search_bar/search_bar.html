@@ -1,17 +1,27 @@
-{% with uid=search_bar.name|slugify values_id="search-bar-values-"|add:search_bar.name|slugify %}
+{% with uid=search_bar.name|slugify values_id="search-bar-values-"|add:search_bar.name|slugify selected_id="search-bar-selected-"|add:search_bar.name|slugify %}
     {{ search_bar.values|json_script:values_id }}
+    {% if search_bar.selected_value %}{{ search_bar.selected_value|json_script:selected_id }}{% endif %}
     <div class="position-relative"
          x-data="{
             query: '',
+            // Separate from `query` so an already-selected value doesn't filter out
+            // the rest of the list as soon as the dropdown opens.
+            searchTerm: '',
             open: false,
             values: JSON.parse(document.getElementById('{{ values_id }}').textContent),
+            init() {
+                {% if search_bar.selected_value %}
+                this.select(JSON.parse(document.getElementById('{{ selected_id }}').textContent));
+                {% endif %}
+            },
             // Case-insensitive substring match against each value's label
             get filtered() {
-                const term = this.query.trim().toLowerCase();
+                const term = this.searchTerm.trim().toLowerCase();
                 return this.values.filter(value => value.label.toLowerCase().includes(term));
             },
             select(value) {
                 this.query = value.label;
+                this.searchTerm = value.label;
                 this.open = false;
                 // Let the page react to the chosen value (e.g. @search-bar-select on a parent)
                 this.$dispatch('search-bar-select', { name: '{{ search_bar.name }}', value });
@@ -26,8 +36,8 @@
                placeholder="{{ search_bar.placeholder }}"
                autocomplete="off"
                x-model="query"
-               @focus="open = true"
-               @input="open = true"
+               @focus="open = true; searchTerm = ''"
+               @input="open = true; searchTerm = query"
                @keydown.escape="open = false">
         <ul class="list-group position-absolute w-100 shadow-sm overflow-auto"
             style="z-index:1000;

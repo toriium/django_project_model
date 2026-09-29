@@ -32,8 +32,16 @@ def search_bar_example(request):
         {"label": "White", "hex": "#ffffff"},
         {"label": "Yellow", "hex": "#ffff00"},
     ]
+
+    fruit_search = build_search_bar_context(name="fruit", values=fruits, placeholder="Type a fruit...")
+    color_search = build_search_bar_context(name="color", values=colors, placeholder="Type a color...") 
+    color_search_preselected = build_search_bar_context(
+        name="color preselected", values=colors, placeholder="Type a color...", selected_value=colors[9]
+    )
+    
     context = {
-        "fruit_search": build_search_bar_context(name="fruit", values=fruits, placeholder="Type a fruit..."),
-        "color_search": build_search_bar_context(name="color", values=colors, placeholder="Type a color..."),
+        "fruit_search": fruit_search,
+        "color_search": color_search,
+        "color_search_preselected": color_search_preselected,
     }
     return render(request, "library_app/search_bar_example.html", context)

@@ -32,6 +32,7 @@ def build_dynamic_table_context(table_name: str, url_name: str, description: str
         "description": description,
     }
 
+
 def build_static_simple_table_context(table_name: str, values: list[BaseModel], description: str = "") -> dict:
     columns = list(values[0].model_fields.keys()) if values else []
     data = [list(v.model_dump().values()) for v in values]

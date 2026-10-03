@@ -74,6 +74,20 @@ def build_static_autofilter_model_table_context(
         search_bar = build_search_bar_context(name=field.name, values=[{"label": label} for label in labels])
         filters.append({"search_bar": search_bar, "selected": selected})
 
+    date_filters = []
+    for field in fields:
+        if not isinstance(field, models.DateField):
+            continue
+        start = request.GET.get(f"{field.name}_from", "")
+        end = request.GET.get(f"{field.name}_to", "")
+        # DateTimeField is a DateField subclass; compare only its day so the range includes the end date
+        lookup = f"{field.name}__date" if isinstance(field, models.DateTimeField) else field.name
+        if start:
+            queryset = queryset.filter(**{f"{lookup}__gte": start})
+        if end:
+            queryset = queryset.filter(**{f"{lookup}__lte": end})
+        date_filters.append({"name": field.name, "start": start, "end": end})
+
     columns = [field.name for field in fields]
     data = []
     # The table starts empty and only loads once the Filter button is clicked
@@ -94,4 +108,5 @@ def build_static_autofilter_model_table_context(
             "description": description,
         },
         "filters": filters,
+        "date_filters": date_filters,
     }

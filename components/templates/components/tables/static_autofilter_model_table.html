@@ -24,6 +24,23 @@
             </div>
         {% endwith %}
     {% endfor %}
+    {% for filter in date_filters %}
+        <div>
+            <label class="form-label">{{ filter.name|capfirst }}</label>
+            <div class="d-flex gap-1">
+                <input type="date"
+                       name="{{ filter.name }}_from"
+                       value="{{ filter.start }}"
+                       class="form-control"
+                       title="From">
+                <input type="date"
+                       name="{{ filter.name }}_to"
+                       value="{{ filter.end }}"
+                       class="form-control"
+                       title="To">
+            </div>
+        </div>
+    {% endfor %}
     <button type="submit"
             name="filtered"
             value="1"

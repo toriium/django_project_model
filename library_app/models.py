@@ -33,6 +33,7 @@ class Book(BaseModel):
     author = models.ForeignKey(Author, on_delete=models.PROTECT, related_name="books")
     publication_year = models.IntegerField()
     genre = models.CharField(max_length=100, default="")
+    published_at = models.DateField(null=True)
 
     def __str__(self):
         return f"{self.title} ({self.author})"

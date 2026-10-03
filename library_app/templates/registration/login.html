@@ -41,7 +41,7 @@
                         <label class="form-check mt-2">
                             <input type="checkbox"
                                    class="form-check-input"
-                                   onchange="{{ form.password.id_for_label }}.type = this.checked ? 'text' : 'password'">
+                                   onchange="document.getElementById('{{ form.password.id_for_label }}').type = this.checked ? 'text' : 'password'">
                             Show password
                         </label>
                     </div>

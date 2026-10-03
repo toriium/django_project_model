@@ -10,110 +10,87 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
               rel="stylesheet">
         <style>
-        .sidebar-width { width: 220px; transition: width .2s ease; }
-        .sidebar-collapsed .sidebar-width { width: 64px; }
-        .sidebar-collapsed .nav-label,
-        .sidebar-collapsed #sidebar-nav .dropdown-toggle::after { display: none; }
-        .sidebar-collapsed #sidebar-nav .nav-link { text-align: center !important; }
+        .sidebar { width: 220px; flex-shrink: 0; white-space: nowrap; transition: width .2s; }
+        .sidebar .nav-link { width: 100%; padding: .5rem; border-radius: .375rem; text-align: left; color: #f8f9fa; }
+        .collapsed .sidebar { width: 64px; }
+        .collapsed .sidebar .nav-link { text-align: center; }
+        .collapsed .label, .collapsed .dropdown-toggle::after { display: none; }
+        #back-to-top { bottom: 28px; right: 28px; width: 40px; height: 40px; display: none; z-index: 1050; }
         </style>
         {% block extra_styles %}{% endblock %}
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js" defer></script>
     </head>
     <body class="bg-light">
         <div class="d-flex flex-column min-vh-100"
-             x-data="{ collapsed: localStorage.getItem('sidebarCollapsed') === '1' }"
-             x-init="$watch('collapsed', v => localStorage.setItem('sidebarCollapsed', v ? '1' : '0'))"
-             :class="{ 'sidebar-collapsed': collapsed }">
-            <!-- Header -->
-            <header class="d-flex border-bottom bg-white">
-                <div class="sidebar-width bg-dark text-white d-flex align-items-center px-3 flex-shrink-0">
-                    <button type="button"
-                            class="btn btn-link text-white p-0 me-2"
-                            @click="collapsed = !collapsed"
-                            :title="collapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+             x-data="{ collapsed: localStorage.sidebarCollapsed === 'true' }"
+             x-effect="localStorage.sidebarCollapsed = collapsed"
+             :class="{ collapsed }">
+            <header class="d-flex bg-white border-bottom">
+                <div class="sidebar bg-dark text-white d-flex align-items-center gap-2 px-3">
+                    <button class="btn btn-link text-white p-0" @click="collapsed = !collapsed">
                         <i class="bi bi-list fs-4"></i>
                     </button>
-                    <h5 class="mb-0 text-nowrap nav-label"><i class="bi bi-diamond-fill"></i> Admin Panel</h5>
+                    <span class="label fs-5"><i class="bi bi-diamond-fill"></i> Admin Panel</span>
                 </div>
-                <nav class="navbar navbar-light flex-grow-1 py-3 px-4" style="min-width:0">
-                    <span class="navbar-brand fw-bold">
-                        {% block page_title %}{% endblock %}
-                    </span>
-                    <div class="d-flex align-items-center">
-                        {% if user.is_authenticated %}
+                <nav class="navbar flex-grow-1 py-3 px-4">
+                    <span class="navbar-brand fw-bold">{% block page_title %}{% endblock %}</span>
+                    {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'logout' %}" class="m-0">
+                            {% csrf_token %}
                             <span class="me-3 text-secondary"><i class="bi bi-person-fill"></i> {{ user.username }}</span>
-                            <form method="post" action="{% url 'logout' %}" class="d-inline m-0">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
-                            </form>
-                        {% else %}
-                            <a href="{% url 'login' %}?next={{ request.path }}"
-                               class="btn btn-primary btn-sm">Login</a>
-                        {% endif %}
-                    </div>
+                            <button class="btn btn-outline-danger btn-sm">Logout</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}?next={{ request.path }}"
+                           class="btn btn-primary btn-sm">Login</a>
+                    {% endif %}
                 </nav>
             </header>
             <div class="d-flex flex-grow-1">
-                <!-- Sidebar -->
-                <nav class="sidebar-width bg-dark text-white p-3 flex-shrink-0">
-                    <ul class="nav flex-column mb-2" id="sidebar-nav">
-                        {% get_nav_items as nav_items %}
-                        {% for item in nav_items %}
-                            <li class="nav-item {% if item.nav_items_list %}dropend{% endif %}">
-                                {% if item.nav_items_list %}
-                                    <button type="button"
-                                            class="nav-link px-2 rounded text-light dropdown-toggle bg-transparent border-0 w-100 text-start text-nowrap"
-                                            data-bs-toggle="dropdown"
-                                            title="{{ item.label }}"
-                                            aria-expanded="false"><i class="bi {{ item.icon }}"></i><span class="nav-label"> {{ item.label }}</span></button>
-                                    <ul class="dropdown-menu dropdown-menu-dark">
-                                        {% for child in item.nav_items_list %}
-                                            <li>
-                                                <a class="dropdown-item {% nav_active_class child.href %}"
-                                                   href="{{ child.href }}"
-                                                   {% if child.new_tab %}target="_blank"{% endif %}><i class="bi {{ child.icon }}"></i> {{ child.label }}</a>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    <a class="nav-link px-2 rounded text-nowrap {% nav_active_class item.href %}"
-                                       href="{{ item.href }}"
-                                       title="{{ item.label }}"
-                                       {% if item.new_tab %}target="_blank"{% endif %}><i class="bi {{ item.icon }}"></i><span class="nav-label"> {{ item.label }}</span></a>
-                                {% endif %}
+                <ul class="sidebar nav flex-column bg-dark p-3 m-0">
+                    {% get_nav_items as nav_items %}
+                    {% for item in nav_items %}
+                        {% if item.nav_items_list %}
+                            <li class="dropend">
+                                <button class="nav-link dropdown-toggle"
+                                        data-bs-toggle="dropdown"
+                                        title="{{ item.label }}">
+                                    <i class="bi {{ item.icon }}"></i><span class="label"> {{ item.label }}</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    {% for child in item.nav_items_list %}
+                                        <li>
+                                            <a class="dropdown-item {% nav_active_class child.href %}"
+                                               href="{{ child.href }}"
+                                               {% if child.new_tab %}target="_blank"{% endif %}><i class="bi {{ child.icon }}"></i> {{ child.label }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
                             </li>
-                        {% endfor %}
-                    </ul>
-                </nav>
-                <!-- Main content -->
-                <main class="flex-grow-1 p-4" style="min-width:0; overflow-x:auto">
+                        {% else %}
+                            <li>
+                                <a class="nav-link {% nav_active_class item.href %}"
+                                   href="{{ item.href }}"
+                                   title="{{ item.label }}"
+                                   {% if item.new_tab %}target="_blank"{% endif %}><i class="bi {{ item.icon }}"></i><span class="label"> {{ item.label }}</span></a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <main class="flex-grow-1 p-4 overflow-auto">
                     {% block content %}{% endblock %}
                 </main>
             </div>
         </div>
         <button id="back-to-top"
-                title="Back to top"
-                onclick="window.scrollTo({top:0,behavior:'smooth'})"
                 class="btn btn-primary rounded-circle position-fixed"
-                style="bottom:28px;
-                       right:28px;
-                       width:40px;
-                       height:40px;
-                       display:none;
-                       z-index:1050">
+                onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
             <i class="bi bi-arrow-up"></i>
         </button>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-        const _btt = document.getElementById('back-to-top');
         window.addEventListener('scroll', function () {
-            _btt.style.display = window.scrollY > 200 ? 'flex' : 'none';
-        });
-
-        document.querySelectorAll('#sidebar-nav .dropdown').forEach(function (el) {
-            const dropdown = bootstrap.Dropdown.getOrCreateInstance(el.querySelector('[data-bs-toggle="dropdown"]'));
-            el.addEventListener('mouseenter', function () { dropdown.show(); });
-            el.addEventListener('mouseleave', function () { dropdown.hide(); });
+            document.getElementById('back-to-top').style.display = window.scrollY > 200 ? 'flex' : 'none';
         });
         </script>
         {% block extra_scripts %}{% endblock %}

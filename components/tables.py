@@ -1,6 +1,9 @@
+from datetime import date
+
 from django.db import models
 from pydantic import BaseModel
 
+from components.date_range import build_date_range_context
 from components.search_bar import build_search_bar_context
 
 
@@ -78,15 +81,17 @@ def build_static_autofilter_model_table_context(
     for field in fields:
         if not isinstance(field, models.DateField):
             continue
-        start = request.GET.get(f"{field.name}_from", "")
-        end = request.GET.get(f"{field.name}_to", "")
+        start_date = request.GET.get(f"{field.name}_start_date")
+        end_date = request.GET.get(f"{field.name}_end_date")
+        start_date = date.fromisoformat(start_date) if start_date else None
+        end_date = date.fromisoformat(end_date) if end_date else None
         # DateTimeField is a DateField subclass; compare only its day so the range includes the end date
         lookup = f"{field.name}__date" if isinstance(field, models.DateTimeField) else field.name
-        if start:
-            queryset = queryset.filter(**{f"{lookup}__gte": start})
-        if end:
-            queryset = queryset.filter(**{f"{lookup}__lte": end})
-        date_filters.append({"name": field.name, "start": start, "end": end})
+        if start_date:
+            queryset = queryset.filter(**{f"{lookup}__gte": start_date})
+        if end_date:
+            queryset = queryset.filter(**{f"{lookup}__lte": end_date})
+        date_filters.append(build_date_range_context(name=field.name, start_date=start_date, end_date=end_date))
 
     columns = [field.name for field in fields]
     data = []

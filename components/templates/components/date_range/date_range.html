@@ -1,0 +1,122 @@
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+{% with uid=date_range.name|slugify %}
+    <div class="position-relative"
+         x-data="{
+            // Applied range, sent by the hidden inputs
+            start: '{{ date_range.start_date|date:'Y-m-d' }}',
+            end: '{{ date_range.end_date|date:'Y-m-d' }}',
+            // Range being edited in the panel, only applied on Apply
+            draftStart: '',
+            draftEnd: '',
+            preset: 'custom',
+            open: false,
+            init() {
+                const options = (key) => ({
+                    inline: true,
+                    onChange: (_, dateStr) => { this[key] = dateStr; this.preset = 'custom'; },
+                });
+                flatpickr(this.$refs.startCalendar, options('draftStart'));
+                flatpickr(this.$refs.endCalendar, options('draftEnd'));
+            },
+            get label() {
+                if (this.start && this.end) return `${this.start} - ${this.end}`;
+                if (this.start) return `From ${this.start}`;
+                if (this.end) return `Until ${this.end}`;
+                return 'Select dates...';
+            },
+            daysAgo(days) { const date = new Date(); date.setDate(date.getDate() - days); return date; },
+            setDraft(from, to) {
+                const startPicker = this.$refs.startCalendar._flatpickr;
+                const endPicker = this.$refs.endCalendar._flatpickr;
+                from ? startPicker.setDate(from) : startPicker.clear(false);
+                to ? endPicker.setDate(to) : endPicker.clear(false);
+                this.draftStart = from ? startPicker.formatDate(startPicker.selectedDates[0], 'Y-m-d') : '';
+                this.draftEnd = to ? endPicker.formatDate(endPicker.selectedDates[0], 'Y-m-d') : '';
+            },
+            applyPreset() {
+                const today = new Date();
+                const ranges = {
+                    today: [today, today],
+                    yesterday: [this.daysAgo(1), this.daysAgo(1)],
+                    week_to_date: [this.daysAgo((today.getDay() + 6) % 7), today],
+                    last_7_days: [this.daysAgo(6), today],
+                    last_15_days: [this.daysAgo(14), today],
+                    month_to_date: [new Date(today.getFullYear(), today.getMonth(), 1), today],
+                    year_to_date: [new Date(today.getFullYear(), 0, 1), today],
+                };
+                if (ranges[this.preset]) this.setDraft(...ranges[this.preset]);
+            },
+            openPanel() {
+                this.setDraft(this.start, this.end);
+                this.preset = 'custom';
+                this.open = true;
+            },
+            apply() {
+                // Keep the range in order if the end date was picked before the start date
+                const swap = this.draftStart && this.draftEnd && this.draftStart > this.draftEnd;
+                this.start = swap ? this.draftEnd : this.draftStart;
+                this.end = swap ? this.draftStart : this.draftEnd;
+                this.open = false;
+            },
+         }"
+         @click.outside="open = false">
+        <label for="date-range-{{ uid }}" class="form-label">{{ date_range.name|capfirst }}</label>
+        <button type="button"
+                id="date-range-{{ uid }}"
+                class="form-control text-start text-nowrap"
+                @click="open ? open = false : openPanel()">
+            <i class="bi bi-calendar3 me-1"></i> <span x-text="label"></span>
+        </button>
+        <div class="card shadow position-absolute p-3"
+             style="z-index: 1000;
+                    width: max-content"
+             x-show="open"
+             x-cloak>
+            <select class="form-select form-select-sm mb-3"
+                    x-model="preset"
+                    @change="applyPreset()">
+                <option value="custom">Custom</option>
+                <option value="today">Today</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="week_to_date">Week to date</option>
+                <option value="last_7_days">Last 7 days</option>
+                <option value="last_15_days">Last 15 days</option>
+                <option value="month_to_date">Month to date</option>
+                <option value="year_to_date">Year to date</option>
+            </select>
+            <div class="d-flex gap-3">
+                <div>
+                    <div class="small text-muted">Start date</div>
+                    <input type="text"
+                           class="form-control form-control-sm mb-2"
+                           placeholder="-"
+                           readonly
+                           x-ref="startCalendar">
+                </div>
+                <div>
+                    <div class="small text-muted">End date</div>
+                    <input type="text"
+                           class="form-control form-control-sm mb-2"
+                           placeholder="-"
+                           readonly
+                           x-ref="endCalendar">
+                </div>
+            </div>
+            <div class="d-flex justify-content-between mt-3">
+                <button type="button"
+                        class="btn btn-sm btn-link text-danger p-0"
+                        @click="setDraft('', ''); preset = 'custom'">Clear</button>
+                <div class="d-flex gap-2">
+                    <button type="button"
+                            class="btn btn-sm btn-outline-secondary"
+                            @click="open = false">Cancel</button>
+                    <button type="button" class="btn btn-sm btn-primary" @click="apply()">Apply</button>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" name="{{ date_range.name }}_start_date" :value="start">
+        <input type="hidden" name="{{ date_range.name }}_end_date" :value="end">
+    </div>
+{% endwith %}

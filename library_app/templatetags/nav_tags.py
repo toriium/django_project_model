@@ -70,6 +70,11 @@ def get_nav_items() -> list[NavItem | NavGroup]:
             icon=Icons.AUTHORS,
             url_name="authors_table",
         ),
+        NavItem(
+            label="Autofilter Table",
+            icon=Icons.TABLES,
+            url_name="autofilter_table",
+        ),
     ]
     tables_nav = NavGroup(
         label="Tables",

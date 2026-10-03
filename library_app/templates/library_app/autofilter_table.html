@@ -1,0 +1,6 @@
+{% extends "library_app/base.html" %}
+{% block title %}Autofilter Table - Admin Panel{% endblock %}
+{% block page_title %}Autofilter Table{% endblock %}
+{% block content %}
+    {% include "components/tables/static_autofilter_model_table.html" with table=table filters=filters only %}
+{% endblock %}

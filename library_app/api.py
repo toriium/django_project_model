@@ -4,6 +4,7 @@ from ninja import NinjaAPI, Schema
 from ninja.security import django_auth
 
 from library_app.models import Author
+from django.db import models
 
 api = NinjaAPI()
 
@@ -25,7 +26,7 @@ class TableSchema(Schema):
     rows: list[dict]
 
 
-def build_model_response_table(table, limit: int, offset: int, fields: list[str]) -> TableSchema:
+def build_model_response_table(table: type[models.Model], limit: int, offset: int, fields: list[str]) -> TableSchema:
     qtd_all_rows = table.objects.count()
     qtd_pages = math.ceil(qtd_all_rows / limit)
 

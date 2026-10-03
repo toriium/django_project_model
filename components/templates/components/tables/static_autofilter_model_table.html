@@ -1,0 +1,22 @@
+<form method="get"
+      class="d-flex flex-wrap gap-3"
+      x-data
+      @search-bar-select="$nextTick(() => $el.submit())">
+    {% for filter in filters %}
+        <div style="width: 240px">
+            {% include "components/search_bar/search_bar.html" with search_bar=filter.search_bar only %}
+            {% for value in filter.selected %}
+                <div class="small mt-1">
+                    <button type="button"
+                            class="btn btn-link btn-sm text-danger p-0"
+                            @click="const form = $root; $el.parentElement.remove(); form.submit()">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                    {{ value }}
+                    <input type="hidden" name="{{ filter.search_bar.name }}" value="{{ value }}">
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</form>
+{% include "components/tables/generic_table.html" with table=table only %}

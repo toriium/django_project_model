@@ -10,87 +10,151 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 django.setup()
 
-from library_app.models import Author, Book  # noqa: E402
+from library_app.models import Author, Book, Country  # noqa: E402
+
+COUNTRIES = [
+    {"name": "Greece"},
+    {"name": "Germany"},
+    {"name": "France"},
+    {"name": "Denmark"},
+    {"name": "Russia"},
+    {"name": "England"},
+    {"name": "Czech Republic"},
+    {"name": "Colombia"},
+    {"name": "Argentina"},
+    {"name": "Spain"},
+    {"name": "Brazil"},
+    {"name": "Portugal"},
+]
 
 AUTHORS = [
-    ("Plato", 80),
-    ("Aristotle", 62),
-    ("Friedrich Nietzsche", 55),
-    ("Immanuel Kant", 79),
-    ("Jean-Paul Sartre", 74),
-    ("Albert Camus", 46),
-    ("Soren Kierkegaard", 42),
-    ("Arthur Schopenhauer", 72),
-    ("Fyodor Dostoevsky", 59),
-    ("Leo Tolstoy", 82),
-    ("William Shakespeare", 52),
-    ("Jane Austen", 41),
-    ("Franz Kafka", 40),
-    ("George Orwell", 46),
-    ("Virginia Woolf", 59),
-    ("Gabriel Garcia Marquez", 87),
-    ("Jorge Luis Borges", 86),
-    ("Miguel de Cervantes", 68),
-    ("Machado de Assis", 69),
-    ("Fernando Pessoa", 47),
+    {"name": "Plato", "age": 80, "country": "Greece"},
+    {"name": "Aristotle", "age": 62, "country": "Greece"},
+    {"name": "Friedrich Nietzsche", "age": 55, "country": "Germany"},
+    {"name": "Immanuel Kant", "age": 79, "country": "Germany"},
+    {"name": "Jean-Paul Sartre", "age": 74, "country": "France"},
+    {"name": "Albert Camus", "age": 46, "country": "France"},
+    {"name": "Soren Kierkegaard", "age": 42, "country": "Denmark"},
+    {"name": "Arthur Schopenhauer", "age": 72, "country": "Germany"},
+    {"name": "Fyodor Dostoevsky", "age": 59, "country": "Russia"},
+    {"name": "Leo Tolstoy", "age": 82, "country": "Russia"},
+    {"name": "William Shakespeare", "age": 52, "country": "England"},
+    {"name": "Jane Austen", "age": 41, "country": "England"},
+    {"name": "Franz Kafka", "age": 40, "country": "Czech Republic"},
+    {"name": "George Orwell", "age": 46, "country": "England"},
+    {"name": "Virginia Woolf", "age": 59, "country": "England"},
+    {"name": "Gabriel Garcia Marquez", "age": 87, "country": "Colombia"},
+    {"name": "Jorge Luis Borges", "age": 86, "country": "Argentina"},
+    {"name": "Miguel de Cervantes", "age": 68, "country": "Spain"},
+    {"name": "Machado de Assis", "age": 69, "country": "Brazil"},
+    {"name": "Fernando Pessoa", "age": 47, "country": "Portugal"},
 ]
 
 BOOKS = [
-    ("The Republic", "Plato", -375),
-    ("Symposium", "Plato", -385),
-    ("Nicomachean Ethics", "Aristotle", -340),
-    ("Metaphysics", "Aristotle", -350),
-    ("Thus Spoke Zarathustra", "Friedrich Nietzsche", 1883),
-    ("Beyond Good and Evil", "Friedrich Nietzsche", 1886),
-    ("Critique of Pure Reason", "Immanuel Kant", 1781),
-    ("Critique of Practical Reason", "Immanuel Kant", 1788),
-    ("Being and Nothingness", "Jean-Paul Sartre", 1943),
-    ("Nausea", "Jean-Paul Sartre", 1938),
-    ("The Stranger", "Albert Camus", 1942),
-    ("The Plague", "Albert Camus", 1947),
-    ("Fear and Trembling", "Soren Kierkegaard", 1843),
-    ("Either/Or", "Soren Kierkegaard", 1843),
-    ("The World as Will and Representation", "Arthur Schopenhauer", 1818),
-    ("On the Suffering of the World", "Arthur Schopenhauer", 1851),
-    ("Crime and Punishment", "Fyodor Dostoevsky", 1866),
-    ("The Brothers Karamazov", "Fyodor Dostoevsky", 1880),
-    ("War and Peace", "Leo Tolstoy", 1869),
-    ("Anna Karenina", "Leo Tolstoy", 1877),
-    ("Hamlet", "William Shakespeare", 1600),
-    ("Macbeth", "William Shakespeare", 1606),
-    ("Pride and Prejudice", "Jane Austen", 1813),
-    ("Sense and Sensibility", "Jane Austen", 1811),
-    ("The Trial", "Franz Kafka", 1925),
-    ("The Metamorphosis", "Franz Kafka", 1915),
-    ("1984", "George Orwell", 1949),
-    ("Animal Farm", "George Orwell", 1945),
-    ("Mrs Dalloway", "Virginia Woolf", 1925),
-    ("To the Lighthouse", "Virginia Woolf", 1927),
-    ("One Hundred Years of Solitude", "Gabriel Garcia Marquez", 1967),
-    ("Love in the Time of Cholera", "Gabriel Garcia Marquez", 1985),
-    ("Ficciones", "Jorge Luis Borges", 1944),
-    ("The Aleph", "Jorge Luis Borges", 1949),
-    ("Don Quixote", "Miguel de Cervantes", 1605),
-    ("Novelas ejemplares", "Miguel de Cervantes", 1613),
-    ("Dom Casmurro", "Machado de Assis", 1899),
-    ("The Posthumous Memoirs of Bras Cubas", "Machado de Assis", 1881),
-    ("The Book of Disquiet", "Fernando Pessoa", 1982),
-    ("Message", "Fernando Pessoa", 1934),
+    {"title": "The Republic", "author": "Plato", "publication_year": -375, "genre": "Philosophy"},
+    {"title": "Symposium", "author": "Plato", "publication_year": -385, "genre": "Philosophy"},
+    {"title": "Nicomachean Ethics", "author": "Aristotle", "publication_year": -340, "genre": "Philosophy"},
+    {"title": "Metaphysics", "author": "Aristotle", "publication_year": -350, "genre": "Philosophy"},
+    {
+        "title": "Thus Spoke Zarathustra",
+        "author": "Friedrich Nietzsche",
+        "publication_year": 1883,
+        "genre": "Philosophy",
+    },
+    {"title": "Beyond Good and Evil", "author": "Friedrich Nietzsche", "publication_year": 1886, "genre": "Philosophy"},
+    {"title": "Critique of Pure Reason", "author": "Immanuel Kant", "publication_year": 1781, "genre": "Philosophy"},
+    {
+        "title": "Critique of Practical Reason",
+        "author": "Immanuel Kant",
+        "publication_year": 1788,
+        "genre": "Philosophy",
+    },
+    {"title": "Being and Nothingness", "author": "Jean-Paul Sartre", "publication_year": 1943, "genre": "Philosophy"},
+    {"title": "Nausea", "author": "Jean-Paul Sartre", "publication_year": 1938, "genre": "Novel"},
+    {"title": "The Stranger", "author": "Albert Camus", "publication_year": 1942, "genre": "Novel"},
+    {"title": "The Plague", "author": "Albert Camus", "publication_year": 1947, "genre": "Novel"},
+    {"title": "Fear and Trembling", "author": "Soren Kierkegaard", "publication_year": 1843, "genre": "Philosophy"},
+    {"title": "Either/Or", "author": "Soren Kierkegaard", "publication_year": 1843, "genre": "Philosophy"},
+    {
+        "title": "The World as Will and Representation",
+        "author": "Arthur Schopenhauer",
+        "publication_year": 1818,
+        "genre": "Philosophy",
+    },
+    {
+        "title": "On the Suffering of the World",
+        "author": "Arthur Schopenhauer",
+        "publication_year": 1851,
+        "genre": "Essay",
+    },
+    {"title": "Crime and Punishment", "author": "Fyodor Dostoevsky", "publication_year": 1866, "genre": "Novel"},
+    {"title": "The Brothers Karamazov", "author": "Fyodor Dostoevsky", "publication_year": 1880, "genre": "Novel"},
+    {"title": "War and Peace", "author": "Leo Tolstoy", "publication_year": 1869, "genre": "Novel"},
+    {"title": "Anna Karenina", "author": "Leo Tolstoy", "publication_year": 1877, "genre": "Novel"},
+    {"title": "Hamlet", "author": "William Shakespeare", "publication_year": 1600, "genre": "Tragedy"},
+    {"title": "Macbeth", "author": "William Shakespeare", "publication_year": 1606, "genre": "Tragedy"},
+    {"title": "Pride and Prejudice", "author": "Jane Austen", "publication_year": 1813, "genre": "Romance"},
+    {"title": "Sense and Sensibility", "author": "Jane Austen", "publication_year": 1811, "genre": "Romance"},
+    {"title": "The Trial", "author": "Franz Kafka", "publication_year": 1925, "genre": "Novel"},
+    {"title": "The Metamorphosis", "author": "Franz Kafka", "publication_year": 1915, "genre": "Novella"},
+    {"title": "1984", "author": "George Orwell", "publication_year": 1949, "genre": "Dystopian"},
+    {"title": "Animal Farm", "author": "George Orwell", "publication_year": 1945, "genre": "Satire"},
+    {"title": "Mrs Dalloway", "author": "Virginia Woolf", "publication_year": 1925, "genre": "Novel"},
+    {"title": "To the Lighthouse", "author": "Virginia Woolf", "publication_year": 1927, "genre": "Novel"},
+    {
+        "title": "One Hundred Years of Solitude",
+        "author": "Gabriel Garcia Marquez",
+        "publication_year": 1967,
+        "genre": "Magical Realism",
+    },
+    {
+        "title": "Love in the Time of Cholera",
+        "author": "Gabriel Garcia Marquez",
+        "publication_year": 1985,
+        "genre": "Romance",
+    },
+    {"title": "Ficciones", "author": "Jorge Luis Borges", "publication_year": 1944, "genre": "Short Stories"},
+    {"title": "The Aleph", "author": "Jorge Luis Borges", "publication_year": 1949, "genre": "Short Stories"},
+    {"title": "Don Quixote", "author": "Miguel de Cervantes", "publication_year": 1605, "genre": "Novel"},
+    {
+        "title": "Novelas ejemplares",
+        "author": "Miguel de Cervantes",
+        "publication_year": 1613,
+        "genre": "Short Stories",
+    },
+    {"title": "Dom Casmurro", "author": "Machado de Assis", "publication_year": 1899, "genre": "Novel"},
+    {
+        "title": "The Posthumous Memoirs of Bras Cubas",
+        "author": "Machado de Assis",
+        "publication_year": 1881,
+        "genre": "Novel",
+    },
+    {"title": "The Book of Disquiet", "author": "Fernando Pessoa", "publication_year": 1982, "genre": "Prose"},
+    {"title": "Message", "author": "Fernando Pessoa", "publication_year": 1934, "genre": "Poetry"},
 ]
 
 
 def run():
-    authors_by_name = {}
-    for name, age in AUTHORS:
-        author, _ = Author.objects.get_or_create(name=name, defaults={"age": age})
-        authors_by_name[name] = author
+    countries_by_name = {}
+    for data in COUNTRIES:
+        country, _ = Country.objects.get_or_create(name=data["name"])
+        countries_by_name[country.name] = country
 
-    for title, author_name, year in BOOKS:
-        Book.objects.get_or_create(
-            title=title,
-            defaults={"author": authors_by_name[author_name], "publication_year": year},
+    authors_by_name = {}
+    for data in AUTHORS:
+        author, _ = Author.objects.update_or_create(
+            name=data["name"],
+            defaults={**data, "country": countries_by_name[data["country"]]},
+        )
+        authors_by_name[author.name] = author
+
+    for data in BOOKS:
+        Book.objects.update_or_create(
+            title=data["title"],
+            defaults={**data, "author": authors_by_name[data["author"]]},
         )
 
+    print(f"Countries in database: {Country.objects.count()}")
     print(f"Authors in database: {Author.objects.count()}")
     print(f"Books in database: {Book.objects.count()}")
 

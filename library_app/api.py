@@ -16,6 +16,7 @@ def test_fetch(request):
 class TextPayload(Schema):
     text: str
 
+
 class TableSchema(Schema):
     limit: int
     offset: int
@@ -34,7 +35,7 @@ def build_model_response_table(table, limit: int, offset: int, fields: list[str]
     columns = fields if fields else all_fields
     columns = [column for column in columns if column not in remove_fields]
 
-    rows = list(table.objects.all()[offset:offset + limit].values(*columns))
+    rows = list(table.objects.all()[offset : offset + limit].values(*columns))
 
     return TableSchema(
         limit=limit,
@@ -43,7 +44,6 @@ def build_model_response_table(table, limit: int, offset: int, fields: list[str]
         columns=columns,
         rows=rows,
     )
-
 
 
 @api.post("/test-post/", auth=django_auth)

@@ -52,8 +52,7 @@ def build_static_autofilter_model_table_context(
     queryset = model.objects.select_related(*[field.name for field in fields if field.is_relation])
     filters = []
     for field in text_fields:
-        # The search bar input shares the field name, so the GET may repeat a value or send an empty one
-        selected = list(dict.fromkeys(value for value in request.GET.getlist(field.name) if value))
+        selected = request.GET.getlist(field.name)
 
         if field.is_relation:
             # Related objects are shown and filtered by their str(), mapped back to primary keys for the query
@@ -77,6 +76,9 @@ def build_static_autofilter_model_table_context(
 
     columns = [field.name for field in fields]
     data = []
+    # The table starts empty and only loads once the Filter button is clicked
+    if "filtered" not in request.GET:
+        queryset = queryset.none()
     for obj in queryset:
         row = []
         for field in fields:

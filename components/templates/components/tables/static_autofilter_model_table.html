@@ -1,22 +1,33 @@
 <form method="get"
-      class="d-flex flex-wrap gap-3"
+      class="d-flex flex-wrap align-items-start gap-3"
       x-data
-      @search-bar-select="$nextTick(() => $el.submit())">
+      {# Only the hidden inputs below are sent, not the text typed in the search bars #}
+      x-init="$el.querySelectorAll('input[type=text]').forEach(input => input.removeAttribute('name'))">
     {% for filter in filters %}
-        <div style="width: 240px">
-            {% include "components/search_bar/search_bar.html" with search_bar=filter.search_bar only %}
-            {% for value in filter.selected %}
-                <div class="small mt-1">
-                    <button type="button"
-                            class="btn btn-link btn-sm text-danger p-0"
-                            @click="const form = $root; $el.parentElement.remove(); form.submit()">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                    {{ value }}
-                    <input type="hidden" name="{{ filter.search_bar.name }}" value="{{ value }}">
-                </div>
-            {% endfor %}
-        </div>
+        {% with selected_id="autofilter-selected-"|add:filter.search_bar.name|slugify %}
+            {{ filter.selected|json_script:selected_id }}
+            <div style="width: 240px"
+                 x-data="{ selected: JSON.parse(document.getElementById('{{ selected_id }}').textContent) }"
+                 @search-bar-select="if (!selected.includes($event.detail.value.label)) selected.push($event.detail.value.label)">
+                {% include "components/search_bar/search_bar.html" with search_bar=filter.search_bar only %}
+                <template x-for="value in selected" :key="value">
+                    <div class="small mt-1">
+                        <button type="button"
+                                class="btn btn-link btn-sm text-danger p-0"
+                                @click="selected = selected.filter(v => v !== value)">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                        <span x-text="value"></span>
+                        <input type="hidden" name="{{ filter.search_bar.name }}" :value="value">
+                    </div>
+                </template>
+            </div>
+        {% endwith %}
     {% endfor %}
+    <button type="submit"
+            name="filtered"
+            value="1"
+            class="btn btn-primary"
+            style="margin-top: 2rem">Filter</button>
 </form>
 {% include "components/tables/generic_table.html" with table=table only %}

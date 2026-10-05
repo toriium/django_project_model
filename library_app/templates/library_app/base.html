@@ -21,7 +21,7 @@
     </head>
     <body class="bg-light">
         <div class="d-flex flex-column min-vh-100"
-             x-data="{ open: localStorage.sidebarOpen === 'true' }"
+             x-data="{ open: localStorage.sidebarOpen !== 'false' }"
              x-effect="localStorage.sidebarOpen = open">
             <nav class="topbar navbar sticky-top flex-nowrap bg-white border-bottom py-0 px-3">
                 <div class="d-flex align-items-center gap-2">

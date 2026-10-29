@@ -35,6 +35,7 @@ class Icons:
     TEST_POST = "bi-send"
     AUTHORS = "bi-person-badge"
     SEARCH_BAR = "bi-search"
+    MARKDOWN_TEXT = "bi-markdown"
 
 
 @register.simple_tag
@@ -117,6 +118,11 @@ def get_nav_items() -> list[NavItem | NavGroup]:
         icon=Icons.SEARCH_BAR,
         url_name="search_bar_example",
     )
+    markdown_text_nav = NavItem(
+        label="Markdown Text",
+        icon=Icons.MARKDOWN_TEXT,
+        url_name="markdown_text_example",
+    )
     return [
         home_nav,
         tables_nav,
@@ -127,6 +133,7 @@ def get_nav_items() -> list[NavItem | NavGroup]:
         test_fetch_nav,
         test_post_nav,
         search_bar_nav,
+        markdown_text_nav,
     ]
 
 

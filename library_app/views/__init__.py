@@ -8,5 +8,6 @@ from .test_fetch import test_fetch
 from .test_post import test_post
 from .authors_table import authors_table
 from .search_bar_example import search_bar_example
+from .markdown_text_example import markdown_text_example
 from .simple_table import simple_table
 from .autofilter_table import autofilter_table

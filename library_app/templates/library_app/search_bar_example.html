@@ -10,7 +10,7 @@
         <div x-data="{ selected_value: null }"
              @search-bar-select="selected_value = $event.detail.value"
              style="width: 640px">
-            {% include "components/search_bar/search_bar.html" with search_bar=fruit_search only %}
+            {% include "shared/search_bar/search_bar.html" with search_bar=fruit_search only %}
             <div class="d-flex gap-3 mt-3">
                 <div class="w-50">
                     <p class="form-label">Json</p>
@@ -25,7 +25,7 @@
         <div x-data="{ selected_value: null }"
              @search-bar-select="selected_value = $event.detail.value"
              style="width: 640px">
-            {% include "components/search_bar/search_bar.html" with search_bar=color_search only %}
+            {% include "shared/search_bar/search_bar.html" with search_bar=color_search only %}
             <div class="d-flex gap-3 mt-3">
                 <div class="w-50">
                     <p class="form-label">Json</p>
@@ -40,7 +40,7 @@
         <div x-data="{ selected_value: null }"
              @search-bar-select="selected_value = $event.detail.value"
              style="width: 640px">
-            {% include "components/search_bar/search_bar.html" with search_bar=color_search_preselected only %}
+            {% include "shared/search_bar/search_bar.html" with search_bar=color_search_preselected only %}
             <div class="d-flex gap-3 mt-3">
                 <div class="w-50">
                     <p class="form-label">Json</p>

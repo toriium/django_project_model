@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from pydantic import BaseModel
 
-from components.tables import build_static_simple_table_context
+from shared.tables import build_static_simple_table_context
 
 
 class ColorTable(BaseModel):

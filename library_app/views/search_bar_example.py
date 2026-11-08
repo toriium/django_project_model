@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from components.search_bar import build_search_bar_context
+from shared.search_bar import build_search_bar_context
 
 
 def search_bar_example(request):

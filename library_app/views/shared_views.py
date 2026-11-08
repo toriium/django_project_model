@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from pydantic import BaseModel
 
-from components.tables import build_dynamic_table_context, build_static_table_context
+from shared.tables import build_dynamic_table_context, build_static_table_context
 
 
 def generate_static_table_html(request, table_name: str, values: list[BaseModel], description: str = ""):

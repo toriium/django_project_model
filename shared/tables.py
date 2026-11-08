@@ -3,8 +3,8 @@ from datetime import date
 from django.db import models
 from pydantic import BaseModel
 
-from components.date_range import build_date_range_context
-from components.search_bar import build_search_bar_context
+from shared.date_range import build_date_range_context
+from shared.search_bar import build_search_bar_context
 
 
 def build_static_table_context(table_name: str, values: list[BaseModel], description: str = "") -> dict:

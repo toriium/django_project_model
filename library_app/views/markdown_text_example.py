@@ -2,7 +2,7 @@ from pathlib import Path
 
 from django.shortcuts import render
 
-from components.markdown_text import build_markdown_text_context
+from shared.markdown_text import build_markdown_text_context
 
 
 def markdown_text_example(request):

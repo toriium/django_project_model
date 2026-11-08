@@ -9,7 +9,7 @@
             <div style="width: 240px"
                  x-data="{ selected: JSON.parse(document.getElementById('{{ selected_id }}').textContent) }"
                  @search-bar-select="if (!selected.includes($event.detail.value.label)) selected.push($event.detail.value.label)">
-                {% include "components/search_bar/search_bar.html" with search_bar=filter.search_bar only %}
+                {% include "shared/search_bar/search_bar.html" with search_bar=filter.search_bar only %}
                 <template x-for="value in selected" :key="value">
                     <div class="small mt-1">
                         <button type="button"
@@ -25,7 +25,7 @@
         {% endwith %}
     {% endfor %}
     {% for date_range in date_filters %}
-        {% include "components/date_range/date_range.html" with date_range=date_range only %}
+        {% include "shared/date_range/date_range.html" with date_range=date_range only %}
     {% endfor %}
     <button type="submit"
             name="filtered"
@@ -33,4 +33,4 @@
             class="btn btn-primary"
             style="margin-top: 2rem">Filter</button>
 </form>
-{% include "components/tables/generic_table.html" with table=table only %}
+{% include "shared/tables/generic_table.html" with table=table only %}

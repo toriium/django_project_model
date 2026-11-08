@@ -3,7 +3,7 @@ from datetime import date, datetime
 from django.shortcuts import render
 from pydantic import BaseModel
 
-from components.tables import build_static_table_context
+from shared.tables import build_static_table_context
 
 
 class PeopleTable(BaseModel):

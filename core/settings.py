@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from pathlib import Path
+from typing_extensions import Literal
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -21,6 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # In Production, the environment variables will be set in the environment, not in a file.
 load_dotenv(BASE_DIR / ".env")
 
+ENV: Literal["PRD", "DEV"] = os.getenv("ENV") or "DEV"
+
+# APPLICATION SETTINGS
+
+
+# DJANGO SETTINGS
 DEBUG = os.getenv("DEBUG", "False") == "True"  # never set to True in production (False)
 SECRET_KEY = os.getenv("SECRET_KEY")  # secret key for cryptographic signing ('')
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")  # domains allowed to serve the app ([])
@@ -167,3 +174,12 @@ STATIC_ROOT = BASE_DIR / "staticfiles"  # output folder for collectstatic
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "login"
+
+# Logging configuration
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {"console": {"class": "logging.StreamHandler"}},
+    "root": {"handlers": ["console"], "level": "INFO"},
+    "loggers": {"django": {"handlers": ["console"], "level": "INFO", "propagate": False}},
+}

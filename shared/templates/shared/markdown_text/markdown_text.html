@@ -1,42 +1,58 @@
 <link rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.8.1/github-markdown-light.min.css">
 <style>
-    /* Floating TOC: stays fixed on the screen while the page scrolls */
-    .markdown-toc-float { position: fixed; top: 5rem; right: 1rem; z-index: 1030; display: flex; flex-direction: column; align-items: flex-end; }
-    .markdown-toc-panel { width: 280px; max-width: calc(100vw - 2rem); max-height: calc(100vh - 9rem); overflow-y: auto; }
-    .markdown-toc-panel a { text-decoration: none; }
-    .markdown-toc-panel a:hover { text-decoration: underline; }
-    .markdown-toc-panel .toc-level-1 { font-weight: 600; }
-    .markdown-toc-panel .toc-level-3 { padding-left: 1rem; }
-    .markdown-toc-panel .toc-level-4 { padding-left: 2rem; }
+    html { scroll-behavior: smooth; }
     /* Leave space above the heading when jumping to it, so the sticky topbar (48px) doesn't cover it */
     .markdown-body :is(h1, h2, h3, h4, h5, h6)[id] { scroll-margin-top: 4rem; }
-    html { scroll-behavior: smooth; }
+
+    /* Floating TOC: stays fixed on the screen while the page scrolls */
+    .markdown-toc-float { position: fixed; top: 5rem; right: 1rem; z-index: 1030; display: flex; flex-direction: column; align-items: flex-end; }
+    .markdown-toc { width: 260px; max-width: calc(100vw - 2rem); }
+    .markdown-toc-list { max-height: calc(100vh - 12rem); overflow-y: auto; }
+    /* The list below is built by tocbot (toc-list / toc-link / is-active-link are its classes) */
+    .markdown-toc .toc-list { list-style: none; margin: 0; padding-left: 0; }
+    /* Indentation of each nested level (about 2 spaces) */
+    .markdown-toc .toc-list .toc-list { padding-left: .5rem; font-size: .95em; }
+    .markdown-toc .toc-link { display: block; padding: .2rem .35rem; color: var(--bs-secondary-color); text-decoration: none; border-left: 2px solid transparent; }
+    .markdown-toc .toc-link:hover { color: var(--bs-body-color); }
+    /* Same left offset as the links (2px border + .35rem padding), so the title lines up with them */
+    .markdown-toc-title { padding-left: calc(.35rem + 2px); }
+    .markdown-toc .toc-link.is-active-link { color: var(--bs-primary); border-left-color: var(--bs-primary); }
 </style>
 {% if markdown_text.toc %}
     <div class="markdown-toc-float">
-        <button class="btn btn-dark btn-sm shadow"
+        <button class="btn btn-light border btn-sm shadow-sm"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#markdownTocPanel"
                 aria-expanded="false"
                 aria-controls="markdownTocPanel"
                 title="Table of contents">
-            <i class="bi bi-list-ul"></i> Contents
+            <i class="bi bi-list-ul"></i> Table of contents
         </button>
         <div class="collapse mt-2" id="markdownTocPanel">
-            <nav class="markdown-toc-panel bg-white border rounded shadow p-3 small"
+            <nav class="markdown-toc border rounded shadow-sm py-3 pe-3 ps-2 bg-body small"
                  aria-label="Table of contents">
-                <div class="fw-semibold mb-2">Table of contents</div>
-                <ul class="list-unstyled mb-0">
-                    {% for item in markdown_text.toc %}
-                        <li class="toc-level-{{ item.level }} mb-1">
-                            <a href="#{{ item.id }}">{{ item.title }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
+                <h6 class="markdown-toc-title text-uppercase text-muted small mb-2">Table of contents</h6>
+                <div id="markdownTocList" class="markdown-toc-list"></div>
             </nav>
         </div>
     </div>
 {% endif %}
 <div class="markdown-body">{{ markdown_text.html }}</div>
+{% if markdown_text.toc %}
+    <script src="https://cdn.jsdelivr.net/npm/tocbot@4.36.8/dist/tocbot.min.js"></script>
+    <script>
+    // tocbot builds the TOC from the headings and marks the section being read
+    tocbot.init({
+        tocSelector: '#markdownTocList',
+        contentSelector: '.markdown-body',
+        headingSelector: 'h1, h2, h3, h4',
+        // A heading counts as "passed" once it is 100px from the top (below the sticky topbar)
+        headingsOffset: 100,
+        orderedList: false,
+        collapseDepth: 6,              // never collapse sub sections
+        scrollSmooth: false,           // CSS smooth scroll + scroll-margin-top already handle the jump
+    });
+    </script>
+{% endif %}

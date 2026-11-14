@@ -8,7 +8,7 @@ django-admin startproject core .
 python manage.py startapp <app_name>
 
 # Create Admin user
-python manage.py createsuperuser
+python manage.py createsuperuser --username admin --email admin@example.com
 
 # ORM Migrations
 python manage.py makemigrations --name DESC

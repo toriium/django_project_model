@@ -1,3 +1,12 @@
+# Cloudflare Tunnel: uncomment this block and change "localhost {" to ":80 {"
+# (Cloudflare terminates HTTPS; cloudflared reaches Caddy over the internal network)
+# {
+# 	servers {
+# 		trusted_proxies static private_ranges # trusts cloudflared (internal network) and keeps its X-Forwarded-Proto
+# 		client_ip_headers CF-Connecting-IP # real client IP sent by Cloudflare
+# 	}
+# }
+
 localhost {
 	handle /static/* {
 		uri strip_prefix /static
@@ -6,6 +15,8 @@ localhost {
 	}
 
 	handle {
-		reverse_proxy web:8000
+		reverse_proxy web:8000 {
+			header_up X-Real-IP {client_ip} # always overwritten by Caddy, so clients can't spoof it
+		}
 	}
 }

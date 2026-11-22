@@ -12,6 +12,7 @@ dependencies = [
     "gunicorn>=23.0.0",
     "django-ninja>=1.6.2",
     "markdown-it-py>=4.2.0",
+    "django-axes[ipware]>=9.0.0",
 ]
 
 [dependency-groups]

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 from typing_extensions import Literal
 from dotenv import load_dotenv
@@ -71,6 +72,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "shared",
     "library_app",
+    "axes",  # brute-force protection for logins
 ]
 
 MIDDLEWARE = [
@@ -84,7 +86,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.LoginRequiredMiddleware",  # Middleware to require login for all views
     "library_app.middleware.RestrictNonAuthorizedUserMiddleware",  # Restricts non authorized users
     "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware", # protects against clickjacking attacks by setting X-Frame-Options header
+    "axes.middleware.AxesMiddleware",  # must be the last middleware, protects against brute-force attacks
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -175,6 +178,20 @@ STATIC_ROOT = BASE_DIR / "staticfiles"  # output folder for collectstatic
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "login"
+
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesStandaloneBackend",  # must be first: blocks locked-out attempts before checking credentials
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+# Axes (brute-force protection)
+AXES_FAILURE_LIMIT = 5  # locks after 5 failed attempts (3)
+AXES_COOLOFF_TIME = timedelta(minutes=15)  # lock is lifted automatically after this time (None = forever)
+AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]  # locks the username+IP combination, so an attacker can't lock out a real user (["ip_address"])
+AXES_RESET_ON_SUCCESS = True  # resets the failure counter after a successful login (False)
+# Real client IP behind Caddy (only safe because the web container is not published on the host)
+AXES_IPWARE_META_PRECEDENCE_ORDER = ["HTTP_X_REAL_IP", "REMOTE_ADDR"]  # Caddy always overwrites X-Real-IP with the client IP; falls back to REMOTE_ADDR without proxy (["REMOTE_ADDR"])
 
 # Logging configuration
 LOGGING = {

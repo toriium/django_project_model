@@ -1,8 +1,8 @@
 services:
   web:
     build: .
-    ports:
-      - "8000" # Expose port 8000 internally for the Caddy reverse proxy
+    expose:
+      - "8000" # visible only to other containers on the compose network (Caddy), not published on the host
     env_file:
       - .env
     volumes:

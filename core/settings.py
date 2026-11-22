@@ -45,9 +45,11 @@ SECURE_REFERRER_POLICY = "same-origin"  # hides referrer URL on cross-origin req
 SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"  # prevents the site from being opened by cross-origin documents ('same-origin')
 
 # Session
+SESSION_COOKIE_AGE_TIME = timedelta(hours=1)  # session expires after 1 hour of inactivity
+
 SESSION_COOKIE_HTTPONLY = True  # blocks JavaScript from reading the session cookie (True)
 SESSION_COOKIE_SAMESITE = "Lax"  # blocks the session cookie on cross-site POST/iframe/fetch requests ('Lax')
-SESSION_COOKIE_AGE = 3600  # session expires after 1 hour of inactivity (1209600)
+SESSION_COOKIE_AGE = int(SESSION_COOKIE_AGE_TIME.total_seconds())  # session expires after X hour(s) of inactivity (1209600)
 SESSION_SAVE_EVERY_REQUEST = True  # resets the expiry timer on every request (False)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # session also ends when the browser is closed (False)
 

@@ -24,14 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 ENV: Literal["PRD", "QA", "DEV"] = os.getenv("ENV") or "DEV"
 print(f"ENV: {ENV}")
 
-# In PRD it will be loaded in the container
+# Only needs to load the .env file in local development
 if ENV == "DEV":
-    load_dotenv(BASE_DIR / ".env")
+    load_dotenv(BASE_DIR / "envs/.env.local")
 
 def get_var(name: str, source: str="env") -> str:
     # Skips retrieving the variable during Docker build (collectstatic)
     if os.getenv("DOCKER_BUILD") == "1":
-        return None
+        return ""
 
     if source == "env":
         if name not in os.environ:
@@ -45,11 +45,11 @@ def get_var(name: str, source: str="env") -> str:
 CYPHER_KEY = get_var("CYPHER_KEY", source="env")
 
 # DATABASE SETTINGS
-DB_HOST = get_var("DB_HOST", source="env")
-DB_PORT = get_var("DB_PORT", source="env")
-DB_NAME = get_var("DB_NAME", source="env")
-DB_USER = get_var("DB_USER", source="env")
-DB_PASSWORD = get_var("DB_PASSWORD", source="env")
+POSTGRES_HOST = get_var("POSTGRES_HOST", source="env")
+POSTGRES_PORT = get_var("POSTGRES_PORT", source="env")
+POSTGRES_DB = get_var("POSTGRES_DB", source="env")
+POSTGRES_USER = get_var("POSTGRES_USER", source="env")
+POSTGRES_PASSWORD = get_var("POSTGRES_PASSWORD", source="env")
 
 # DJANGO SETTINGS
 DEBUG = True if ENV == "DEV" else False  # never set to True in production (False)
@@ -139,28 +139,25 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# SQLite (for local development)
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": POSTGRES_DB,
+        "USER": POSTGRES_USER,
+        "PASSWORD": POSTGRES_PASSWORD,
+        "HOST": POSTGRES_HOST,
+        "PORT": POSTGRES_PORT,
     }
 }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('DB_NAME'),
-#         'USER': os.getenv('DB_USER'),
-#         'PASSWORD': os.getenv('DB_PASSWORD'),
-#         'HOST': os.getenv('DB_HOST'),
-#         'PORT': os.getenv('DB_PORT'),
-# # for using specific schema other than public, uncomment below
-# #         'OPTIONS': {
-# #             'options': '-c search_path=public,public2'
-# # }
-#     }
-# }
 
 
 # Password validation

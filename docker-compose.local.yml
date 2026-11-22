@@ -1,0 +1,40 @@
+services:
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - static_files:/app/staticfiles
+
+  # web:
+  #   build: .
+  #   restart: always
+  #   expose:
+  #     - "8000" # visible only to other containers on the compose network (Caddy), not published on the host
+  #   env_file:
+  #     - envs/.env.dev
+  #   volumes:
+  #     - static_files:/app/staticfiles
+  #   depends_on:
+  #     - postgres_server
+  #     - caddy
+
+  postgres_server:
+    image: postgres:latest
+    restart: always
+    container_name: container_postgres
+    ports:
+      - "127.0.0.1:5432:5432" # published only on the host's loopback, so `mise run local` can reach it; not exposed to the network
+    volumes:
+      - postgres_data:/var/lib/postgresql # Postgres 18+ expects the mount here, not at .../data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+volumes:
+  static_files:
+  postgres_data:

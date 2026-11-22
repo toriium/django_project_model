@@ -9,18 +9,16 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - static_files:/app/staticfiles
 
-  # web:
-  #   build: .
-  #   restart: always
-  #   expose:
-  #     - "8000" # visible only to other containers on the compose network (Caddy), not published on the host
-  #   env_file:
-  #     - envs/.env.dev
-  #   volumes:
-  #     - static_files:/app/staticfiles
-  #   depends_on:
-  #     - postgres_server
-  #     - caddy
+  web:
+    build: .
+    restart: always
+    expose:
+      - "8000" # visible only to other containers on the compose network (Caddy), not published on the host
+    env_file:
+      - envs/.env.dev
+    depends_on:
+      - postgres_server
+      - caddy
 
   postgres_server:
     image: postgres:latest

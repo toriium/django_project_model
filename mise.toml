@@ -7,6 +7,10 @@ run = "docker compose down"
 [tasks.logs]
 run = "docker compose logs -f"
 
+[tasks.local_setup]
+description = "Set up the local development environment using Docker Compose"
+run = "docker compose -f docker-compose.local.yml --env-file ./envs/.env.dev up -d --build"
+
 [tasks.local]
 run = "ENV=DEV uv run python manage.py runserver"
 

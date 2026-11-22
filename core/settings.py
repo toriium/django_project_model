@@ -193,11 +193,15 @@ AXES_FAILURE_LIMIT = 5  # locks after 5 failed attempts (3)
 AXES_COOLOFF_TIME = timedelta(minutes=15)  # lock is lifted automatically after this time (None = forever)
 AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]  # locks the username+IP combination, so an attacker can't lock out a real user (["ip_address"])
 AXES_RESET_ON_SUCCESS = True  # resets the failure counter after a successful login (False)
-# Real client IP behind Caddy (only safe because the web container is not published on the host)
+
+# Order of precedence for IP headers to determine the real client IP
+# Caddy always overwrites X-Real-IP with the client IP; falls back to REMOTE_ADDR without proxy (["REMOTE_ADDR"])
+# PRD Flow: Cloudflare -> Caddy -> Gunicorn -> Django
 AXES_IPWARE_META_PRECEDENCE_ORDER = [
-    "HTTP_X_REAL_IP", # Created by Caddy, sets the real client IP here
-    "REMOTE_ADDR" # Created by Gunicorn
-]  # Caddy always overwrites X-Real-IP with the client IP; falls back to REMOTE_ADDR without proxy (["REMOTE_ADDR"])
+    "CF-Connecting-IP", # Created by CloudflareD Proxy
+    "X-Real-IP", # Created by our Caddy, sets the real client IP here
+    "REMOTE_ADDR", # Created by Gunicorn, if behind a proxy it will receive the proxys IP, eg the IP of Caddy or cloudflared
+]  
 
 # Logging configuration
 LOGGING = {

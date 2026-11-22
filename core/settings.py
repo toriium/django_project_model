@@ -19,22 +19,45 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Only loads the .env file if it exists
-# In Production, the environment variables will be set in the environment, not in a file.
-load_dotenv(BASE_DIR / ".env")
 
-ENV: Literal["PRD", "DEV"] = os.getenv("ENV") or "DEV"
+# In Production, the environment variables will be set in the environment, not in a file.
+ENV: Literal["PRD", "QA", "DEV"] = os.getenv("ENV") or "DEV"
+print(f"ENV: {ENV}")
+
+# In PRD it will be loaded in the container
+if ENV == "DEV":
+    load_dotenv(BASE_DIR / ".env")
+
+def get_var(name: str, source: str="env") -> str:
+    # Skips retrieving the variable during Docker build (collectstatic)
+    if os.getenv("DOCKER_BUILD") == "1":
+        return None
+
+    if source == "env":
+        if name not in os.environ:
+            raise ValueError(f"Missing required environment variable: {name}")
+        return os.getenv(name)
+    
+    
+    raise ValueError(f"Invalid source specified: {source}")
 
 # APPLICATION SETTINGS
+CYPHER_KEY = get_var("CYPHER_KEY", source="env")
 
+# DATABASE SETTINGS
+DB_HOST = get_var("DB_HOST", source="env")
+DB_PORT = get_var("DB_PORT", source="env")
+DB_NAME = get_var("DB_NAME", source="env")
+DB_USER = get_var("DB_USER", source="env")
+DB_PASSWORD = get_var("DB_PASSWORD", source="env")
 
 # DJANGO SETTINGS
-DEBUG = os.getenv("DEBUG", "False") == "True"  # never set to True in production (False)
-SECRET_KEY = os.getenv("SECRET_KEY")  # secret key for cryptographic signing ('')
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")  # domains allowed to serve the app ([])
+DEBUG = True if ENV == "DEV" else False  # never set to True in production (False)
+SECRET_KEY = get_var("SECRET_KEY", source="env")  # secret key for cryptographic signing ('')
+ALLOWED_HOSTS = get_var("ALLOWED_HOSTS", source="env").split(",")  # domains allowed to serve the app ([])
 
 # CSRF
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")  # origins trusted for CSRF POST requests ([])
+CSRF_TRUSTED_ORIGINS = get_var("CSRF_TRUSTED_ORIGINS", source="env").split(",")  # origins trusted for CSRF POST requests ([])
 CSRF_COOKIE_HTTPONLY = True  # blocks JavaScript from reading the CSRF cookie (False)
 CSRF_COOKIE_SAMESITE = "Lax"  # blocks the CSRF cookie on cross-site POST/iframe/fetch requests ('Lax')
 

@@ -9,8 +9,9 @@ WORKDIR /app
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 
+
 COPY . .
-RUN .venv/bin/python manage.py collectstatic --noinput
+RUN DOCKER_BUILD=1 .venv/bin/python manage.py collectstatic --noinput
 
 # ---- runtime stage: only the ready-to-run app, no build tools ----
 FROM python:3.12-slim

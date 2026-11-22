@@ -197,9 +197,11 @@ AXES_RESET_ON_SUCCESS = True  # resets the failure counter after a successful lo
 # Order of precedence for IP headers to determine the real client IP
 # Caddy always overwrites X-Real-IP with the client IP; falls back to REMOTE_ADDR without proxy (["REMOTE_ADDR"])
 # PRD Flow: Cloudflare -> Caddy -> Gunicorn -> Django
+# "CF-Connecting-IP", # Created by CloudflareD Proxy and sent to the caddy
+# Django converts the headers "-" to "_", so "X-Real-IP" becomes "HTTP_X_REAL_IP"
+
 AXES_IPWARE_META_PRECEDENCE_ORDER = [
-    "CF-Connecting-IP", # Created by CloudflareD Proxy
-    "X-Real-IP", # Created by our Caddy, sets the real client IP here
+    "HTTP_X_REAL_IP", # Created by our Caddy with "X-Real-IP", sets the real client IP here
     "REMOTE_ADDR", # Created by Gunicorn, if behind a proxy it will receive the proxys IP, eg the IP of Caddy or cloudflared
 ]  
 

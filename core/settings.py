@@ -74,6 +74,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "django.middleware.gzip.GZipMiddleware",  # needs to be the first middleware, as it compresses the response content
     "django.middleware.security.SecurityMiddleware",
     # "whitenoise.middleware.WhiteNoiseMiddleware",  # Whitenoise middleware to serve static files
     "django.contrib.sessions.middleware.SessionMiddleware",

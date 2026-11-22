@@ -42,6 +42,7 @@ CSRF_COOKIE_SAMESITE = "Lax"  # blocks the CSRF cookie on cross-site POST/iframe
 X_FRAME_OPTIONS = "DENY"  # prevents site from being embedded in iframes ('DENY')
 SECURE_CONTENT_TYPE_NOSNIFF = True  # prevents browser from guessing file content type (True)
 SECURE_REFERRER_POLICY = "same-origin"  # hides referrer URL on cross-origin requests ('same-origin')
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin"  # prevents the site from being opened by cross-origin documents ('same-origin')
 
 # Session
 SESSION_COOKIE_HTTPONLY = True  # blocks JavaScript from reading the session cookie (True)
